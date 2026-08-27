@@ -1,0 +1,10 @@
+$ unset ANTHROPIC_API_KEY AI_API_KEY
+$ python main.py commit --repo $SANDBOX
+
+[INFO] 저장소: /tmp/tmp.Lrxn7P59ev (브랜치 feature/retry-on-timeout)
+[INFO] Git status 수집 완료: 1개 파일 변경 감지
+[INFO] git diff HEAD 수집 완료: 8줄
+[INFO] 컨벤션 'default' 적용 (/tmp/tmp.Lrxn7P59ev/.ai-gitgen.json)
+[INFO] 안전 모드 ON — 마스킹 0건 · 파일 1/1개 · 줄 8/8줄
+[ERROR] ANTHROPIC_API_KEY 또는 AI_API_KEY 환경변수가 설정되지 않았습니다.
+        예) export ANTHROPIC_API_KEY="YOUR_KEY"

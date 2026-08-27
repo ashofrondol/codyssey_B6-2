@@ -1,0 +1,17 @@
+$ python main.py commit --repo /tmp/tmp.Lrxn7P59ev --dry-run
+
+[INFO] 저장소: /tmp/tmp.Lrxn7P59ev (브랜치 feature/retry-on-timeout)
+[INFO] Git status 수집 완료: 3개 파일 변경 감지
+[INFO] git diff HEAD 수집 완료: 69줄
+[INFO] 컨벤션 'default' 적용 (/tmp/tmp.Lrxn7P59ev/.ai-gitgen.json)
+[INFO] 안전 모드 ON — 마스킹 2건 · 파일 3/3개 · 줄 69/69줄 · 규칙별(anthropic-key×1, email×1)
+[WARN] --dry-run: AI API 를 호출하지 않았습니다. 결과는 Git 사실만으로 조립한 초안입니다.
+[DONE] 커밋 메시지 생성 완료 — API 호출 0회
+
+----------------------- Commit Message -----------------------
+chore: [DRY-RUN] 3개 파일 변경
+
+- diff 69줄 반영
+- 변경 파일: .ai-gitgen.json, src/config.py, src/payment.py
+--------------------------------------------------------------
+[INFO] 생성 결과는 초안입니다. 검토 후 직접 커밋/PR 에 적용하세요.

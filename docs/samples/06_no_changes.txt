@@ -1,0 +1,6 @@
+$ python main.py commit --repo /tmp/tmp.Lrxn7P59ev
+
+[INFO] 저장소: /tmp/tmp.Lrxn7P59ev (브랜치 feature/retry-on-timeout)
+[INFO] Git status 수집 완료: 0개 파일 변경 감지
+[INFO] git diff HEAD 수집 완료: 0줄
+[INFO] 변경 사항이 없습니다. 초안을 생성하지 않고 종료합니다.

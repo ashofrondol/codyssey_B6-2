@@ -1,0 +1,30 @@
+{
+  "_comment": "보너스 2·3 예시 설정. --convention team 으로 적용한다. 기본값은 default 컨벤션이다.",
+  "safe_mode": {
+    "max_files": 10,
+    "max_diff_lines": 200,
+    "extra_patterns": [
+      ["사내-사번", "EMP-\\d{6}", "«MASKED:EMP»"],
+      ["사내-슬랙훅", "https://hooks\\.slack\\.com/services/[A-Za-z0-9/]+", "«MASKED:SLACK_WEBHOOK»"]
+    ]
+  },
+  "conventions": {
+    "team": {
+      "commit": {
+        "prefixes": ["feat", "fix", "docs", "refactor", "test", "chore"],
+        "scope": "required",
+        "title_recommended": 50,
+        "title_max": 72,
+        "language": "ko"
+      },
+      "pr": {
+        "title_max": 80,
+        "extra_sections": ["Risk"],
+        "min_bullets": 2,
+        "checklist": ["로컬 테스트 통과", "문서 갱신 확인", "민감정보 미포함 확인"],
+        "tone": "간결한 평서문",
+        "language": "ko"
+      }
+    }
+  }
+}
