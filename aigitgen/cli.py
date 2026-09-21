@@ -209,8 +209,10 @@ def _run(args: argparse.Namespace, factory: GeneratorFactory) -> int:
 
     if args.command == "commit":
         draft, fixes = polish.polish_commit(draft, conv, ctx)
+        advice = polish.advise_commit(draft, conv)  # 권장선(50자) 초과 — 위반이 아니라 권고
     else:
         draft, fixes = polish.polish_pr(draft, conv, ctx)
+        advice = []
 
     label = "커밋 메시지" if args.command == "commit" else "PR 초안"
     usage = generator.usage
@@ -227,6 +229,8 @@ def _run(args: argparse.Namespace, factory: GeneratorFactory) -> int:
     if problems:
         render.warn(f"규칙 위반 {len(problems)}건이 남아 후처리로 보정했습니다. 적용 전 검토하세요.")
         render.bullets(problems)
+    for note in advice:
+        render.warn(note)
 
     if args.command == "commit":
         render.block("Commit Message", draft.render())

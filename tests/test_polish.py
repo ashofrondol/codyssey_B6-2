@@ -126,6 +126,62 @@ class TestCommitValidation(BaseTest):
         self.assertEqual(drafted.body_bullets, ["이미 기호가 붙음"])
 
 
+class TestTitleAdvice(BaseTest):
+    """R5-2 의 두 숫자 — 50자는 권고(경고), 72자는 상한(검증·절삭)."""
+
+    def setUp(self):
+        self.conv = Convention()
+        self.ctx = make_ctx()
+
+    def draft(self, subject):
+        return polish.CommitDraft(type="feat", scope="cli", subject=subject)
+
+    def title_len(self, subject):
+        return len(self.draft(subject).title)
+
+    def test_권장_이내면_말하지_않는다(self):
+        # `feat(cli): ` 11자 + 30자 = 41자
+        self.assertEqual(self.title_len("가" * 30), 41)
+        self.assertEqual(polish.advise_commit(self.draft("가" * 30), self.conv), [])
+
+    def test_권장_초과_상한_이내면_경고한다(self):
+        draft = self.draft("가" * 55)  # 11 + 55 = 66자
+        self.assertEqual(len(draft.title), 66)
+        # 상한(72자) 검증은 여전히 통과해야 한다 — 위반이 아니라 권고이기 때문이다
+        self.assertEqual(polish.validate_commit(draft, self.conv), [])
+        notes = polish.advise_commit(draft, self.conv)
+        self.assertEqual(len(notes), 1)
+        self.assertIn("66자", notes[0])
+        self.assertIn("권장 50자", notes[0])
+
+    def test_경계값_50자는_통과하고_51자는_경고한다(self):
+        self.assertEqual(polish.advise_commit(self.draft("가" * 39), self.conv), [])  # 50자
+        self.assertTrue(polish.advise_commit(self.draft("가" * 40), self.conv))  # 51자
+
+    def test_상한으로_잘린_제목도_여전히_권장선을_넘는다고_말한다(self):
+        """72자로 자르는 것은 상한을 맞춘 것이지 권장선을 맞춘 것이 아니다."""
+        drafted, fixes = polish.polish_commit(self.draft("가" * 100), self.conv, self.ctx)
+        self.assertEqual(len(drafted.title), self.conv.commit.title_max)
+        self.assertTrue(any("줄임" in f for f in fixes), fixes)
+        self.assertIn("72자입니다", polish.advise_commit(drafted, self.conv)[0])
+
+    def test_줄이지_못한_제목에는_권고를_덧붙이지_않는다(self):
+        """상한조차 못 맞춘 건 이미 `_fit_title` 이 '직접 줄이세요'라고 보고했다."""
+        conv = Convention(commit=CommitConvention(title_recommended=1, title_max=4))
+        drafted, fixes = polish.polish_commit(self.draft("가" * 40), conv, self.ctx)
+        self.assertGreater(len(drafted.title), conv.commit.title_max)
+        self.assertTrue(any("줄이지 못했습니다" in f for f in fixes), fixes)
+        self.assertEqual(polish.advise_commit(drafted, conv), [])
+
+    def test_컨벤션이_권장선을_바꾸면_경고선도_바뀐다(self):
+        """프롬프트·검증기와 같은 곳(`title_recommended`)에서 숫자를 읽는지."""
+        conv = Convention(commit=CommitConvention(title_recommended=70, title_max=72))
+        self.assertEqual(polish.advise_commit(self.draft("가" * 55), conv), [])  # 66자 < 70
+        notes = polish.advise_commit(self.draft("가" * 60), conv)  # 71자 > 70
+        self.assertTrue(notes)
+        self.assertIn("권장 70자", notes[0])
+
+
 class TestPrValidation(BaseTest):
     def setUp(self):
         self.conv = Convention()

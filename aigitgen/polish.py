@@ -345,3 +345,30 @@ def feedback_message(problems: Sequence[str]) -> str:
         "\n\n---\n방금 만든 초안이 아래 형식 규칙을 어겼다. "
         "내용은 유지하되 규칙을 지켜 다시 만들어라.\n" + listed
     )
+
+
+def advise_commit(draft: CommitDraft, conv: Convention) -> List[str]:
+    """**권장선**을 넘었는지만 본다. 위반이 아니라 권고다.
+
+    명세 R5-2 는 "커밋 제목: 50자 이내 권장(최대 72자)" 로 **두 숫자를 구분**한다.
+    두 숫자는 성격이 다르므로 처리도 달라야 한다.
+
+        51~72자  →  규칙 위반이 아니다. 자르면 안 된다. 알리기만 한다(이 함수)
+        73자~    →  상한 위반이다. `validate_commit()` 이 잡고 `_fit_title()` 이 자른다
+
+    그래서 이 검사를 `validate_commit()` 에 합치지 않았다. 합치면 51자짜리 제목이
+    '형식 위반'이 되어 재생성을 트리거하고, 한 번 실행 1~2회라는 호출 제약(C1-2)을
+    권장선 때문에 소모한다. 권고는 돈을 쓰지 않고 사용자에게만 말해야 한다.
+
+    `polish_commit()` **뒤에** 부르는 것을 전제로 한다. 절삭이 끝난 제목을 재야
+    사용자가 실제로 복사해 갈 문자열의 길이를 말해 줄 수 있다.
+    """
+    c = conv.commit
+    length = len(draft.title)
+    # 상한을 넘은 제목은 이미 절삭 보고(`_fit_title`)가 나갔다. 여기서 또 말하지 않는다.
+    if not c.title_recommended < length <= c.title_max:
+        return []
+    return [
+        f"커밋 제목이 {length}자입니다 — 권장 {c.title_recommended}자를 넘었습니다 "
+        f"(상한 {c.title_max}자는 지켰습니다). 그대로 써도 되지만 더 줄일 수 있는지 검토하세요."
+    ]

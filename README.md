@@ -413,8 +413,13 @@ python main.py commit
 
 > 점검 방식: 저장소의 실제 소스를 명세의 요구사항 ID 와 1:1 대조. 판정 근거는 파일 경로로 명시.
 > README 주장은 근거로 세지 않고, 해당 주장을 뒷받침하는 소스/테스트/샘플을 직접 열어 확인했다.
+>
+> **좌표 표기.** 줄번호(`file.py:12-20`)는 코드를 한 줄만 넣어도 거짓이 된다 — 이 문서가 실제로
+> 한 번 그렇게 깨졌다. 그래서 손댄 곳부터 `file.py::함수명` 같은 **이름 좌표**로 옮기는 중이다.
+> 두 표기가 섞여 있는 것은 그 이행의 흔적이다.
 
-**종합 판정: 대체로 충족** — 필수 32개 중 충족 30 / 부분 1 / 미충족 0 / 로컬검증불가 1
+**종합 판정: 대체로 충족** — 필수 32개 중 충족 31 / 부분 0 / 미충족 0 / 로컬검증불가 1
+(2026-09-21 갱신: R5-2 가 🟡 부분 → ✅ 충족. 아래 G3 참조)
 (보너스 12개 중 충족 5 / 부분 2 / 미충족 5 — B1 미수행)
 
 #### 필수 요구사항
@@ -428,31 +433,31 @@ python main.py commit
 | R1-4 | 변경 없으면 메시지 출력하고 종료 | ✅ 충족 | `aigitgen/gitctx.py:95-97`(`is_empty`) + `aigitgen/cli.py:172-174` — **AI 호출·설정 로드 이전**에 `return 0`. 문구 "변경 사항이 없습니다. 초안을 생성하지 않고 종료합니다." 테스트 `tests/test_cli.py:122-128` 이 "생성기를 만들지도 않았다"까지 검사 |
 | R2 | AI API 연동 | ✅ 충족 | `aigitgen/client.py:109-214` — Anthropic Messages API 호출부(요청 구성 → 응답 파싱 → 예외 변환) |
 | R2-1 | API Key 는 환경변수, 하드코딩 금지 | ✅ 충족 | `aigitgen/client.py:95-106` (`ANTHROPIC_API_KEY` → `AI_API_KEY` 순) / 하드코딩 부재를 AST 로 고정 `tests/test_cli.py:396-406`, 환경변수 전용 읽기 `tests/test_cli.py:408-420`. `.gitignore:5` 에 `.env` 포함 |
-| R2-2 | 실행 시 API 호출 + 결과 터미널 출력 | ✅ 충족 | `aigitgen/client.py:135-214` → `aigitgen/cli.py:203-236`. 종단 테스트 `tests/test_cli.py:45-54`(호출 1회 + `Commit Message` 출력). ⚠️ 다만 저장소의 `docs/samples/*` 는 전부 `--dry-run` 캡처라 **실제 호출 화면 증빙은 없다**(아래 격차 G2) |
+| R2-2 | 실행 시 API 호출 + 결과 터미널 출력 | ✅ 충족 | `aigitgen/client.py:135-214` → `aigitgen/cli.py:203-239`. 종단 테스트 `tests/test_cli.py:45-54`(호출 1회 + `Commit Message` 출력). ⚠️ 다만 저장소의 `docs/samples/*` 는 전부 `--dry-run` 캡처라 **실제 호출 화면 증빙은 없다**(아래 격차 G2) |
 | R2-3 | 호출 실패 시 원인 포함 메시지 | ✅ 충족 | `aigitgen/client.py:155-176` — 401/권한/404(모델)/429(`retry-after`)/400/연결오류/5xx 를 각각 다른 안내로 번역. `aigitgen/errors.py:31-45` 가 `(원인: ...)` 를 붙임. `stop_reason=max_tokens`·`refusal` 도 별도 처리(`client.py:187-198`) |
 | R2-4 | 모델/temperature/max-tokens 를 CLI 옵션 + 기본값 | ✅ 충족 | `aigitgen/cli.py:53-69` — `--model`(기본 `claude-sonnet-4-6`), `--temperature`(기본 0.2), `--max-tokens`(기본 2000). 기본값 상수 `aigitgen/client.py:31-33`. 원문 표기인 홑대시 `-model/-temperature/-max-tokens` 별칭도 수용(`cli.py:55,57,64`), 테스트 `tests/test_cli.py:224-248` |
 | R3 | 커밋 메시지 자동 생성 | ✅ 충족 | `aigitgen/cli.py:184-188` + `aigitgen/prompts.py:157-183` + `aigitgen/polish.py:105-113` |
-| R3-1 | `commit` 명령 → 터미널 출력 | ✅ 충족 | 서브커맨드 정의 `aigitgen/cli.py:96`, 출력 `aigitgen/cli.py:231-232` |
+| R3-1 | `commit` 명령 → 터미널 출력 | ✅ 충족 | 서브커맨드 정의 `aigitgen/cli.py:96`, 출력 `aigitgen/cli.py:235-236` |
 | R3-2 | 변경 사항 요약 기반 생성 | ✅ 충족 | `aigitgen/prompts.py:45-79` — 브랜치/변경 파일 목록/`git status --short`/diff 본문을 컨텍스트로 조립해 전달. 마스킹·절삭 사실도 프롬프트에 명시(`prompts.py:48-55`) |
 | R3-3 | 커밋 제목 1줄 필수 | ✅ 충족 | `aigitgen/polish.py:63-66`(`title` 조립) + `polish.py:29-31`(`_one_line` 으로 줄바꿈 제거) + 검증 `polish.py:138-139,154-155`. 테스트 `tests/test_cli.py:56-62` 이 제목 줄이 정확히 1줄임을 확인 |
 | R3-4 | 커밋 본문은 선택 | ✅ 충족 | `aigitgen/config.py:49` `body="optional"` 기본값, `aigitgen/polish.py:157-161` 이 required/none 일 때만 강제 |
 | R3-5 | 본문 포함 시 파일 1~3개 or 불릿 1~2개 | ✅ 충족 | 스키마 차원 강제 `aigitgen/prompts.py:102-115`(`minItems/maxItems`), 검증 `aigitgen/polish.py:163-168`(둘 **다** 검사 — 명세보다 엄격), 후처리 `polish.py:266-278` |
-| R3-6 | 복사해 적용할 수 있게 출력 | ✅ 충족 | `aigitgen/polish.py:68-76`(제목+빈 줄+불릿의 완성된 커밋 전문) → `aigitgen/render.py:55-60` 구분선 블록. 샘플 `docs/samples/01_commit.txt:13-18` |
+| R3-6 | 복사해 적용할 수 있게 출력 | ✅ 충족 | `aigitgen/polish.py:68-76`(제목+빈 줄+불릿의 완성된 커밋 전문) → `aigitgen/render.py::block` 구분선 블록. 샘플 `docs/samples/01_commit.txt` 의 `Commit Message` 블록 |
 | R4 | PR 제목/본문 자동 생성 | ✅ 충족 | `aigitgen/cli.py:189-193` + `aigitgen/prompts.py:186-215` |
 | R4-1 | PR 초안 생성 명령 | ✅ 충족 | 서브커맨드 `aigitgen/cli.py:97` (`python main.py pr`) |
 | R4-2 | Why/What/How to Test 섹션 헤더 | ✅ 충족 | `aigitgen/config.py:38` `REQUIRED_PR_SECTIONS` (컨벤션으로도 제거 불가 — `config.py:141-146`), 스키마 필수 `aigitgen/prompts.py:130-136`, 렌더 `aigitgen/polish.py:92-97`(`## Why` 형식). 샘플 `docs/samples/02_pr.txt:15-25` |
 | R4-3 | 각 섹션 최소 1개 불릿 | ✅ 충족 | 기본값 `aigitgen/config.py:58` `min_bullets=1`, 검증 `aigitgen/polish.py:187-189`, 부족 시 Git 사실로 보충 `polish.py:302-315` + `polish.py:319-338`. 테스트 `tests/test_cli.py:111-118`(빈 응답을 줘도 각 섹션에 불릿이 남는지) |
-| R4-4 | PR 제목 1줄 + 본문과 함께 출력 | ✅ 충족 | `aigitgen/cli.py:234-235` — `PR Title` / `PR Body` 두 블록. 제목 1줄 보장 `aigitgen/polish.py:122`(`_one_line`) + 검증 `polish.py:180-181` |
+| R4-4 | PR 제목 1줄 + 본문과 함께 출력 | ✅ 충족 | `aigitgen/cli.py:238-239` — `PR Title` / `PR Body` 두 블록. 제목 1줄 보장 `aigitgen/polish.py:122`(`_one_line`) + 검증 `polish.py:180-181` |
 | R5 | 길이/형식 규칙 적용 | ✅ 충족 | `aigitgen/polish.py` 전체(검증 133-190, 후처리 193-316) |
-| R5-1 | 재생성 또는 후처리 택1 | ✅ 충족 | 둘 다 구현하고 이유를 문서화 — 재생성 `aigitgen/cli.py:136-163`(최대 1회, `MAX_API_CALLS=2` 상한, 결과가 더 나쁘면 첫 응답 사용), 후처리 `aigitgen/cli.py:210-213`. 선택 근거 `docs/설계_노트.md:198-223`. 제약 C1-2 와 충돌하지 않음 |
-| R5-2 | 커밋 제목 50자 권장 / 최대 72자 | 🟡 부분 충족 | **상한 72자는 검증+절삭으로 강제**(`aigitgen/config.py:48`, 검증 `polish.py:150-151`, 절삭 `polish.py:193-233`, 테스트 `tests/test_cli.py:90-96`). 그러나 **50자 "권장" 은 프롬프트 지시(`aigitgen/prompts.py:100,174`)로만 존재하고 실행 단계에 경고가 없다** — 66자 제목을 넣어도 `validate_commit()` 이 빈 목록을 돌려준다(아래 🧪 확인). `title_recommended` 는 프롬프트 외에 어디서도 읽히지 않는다 |
+| R5-1 | 재생성 또는 후처리 택1 | ✅ 충족 | 둘 다 구현하고 이유를 문서화 — 재생성 `aigitgen/cli.py:136-163`(최대 1회, `MAX_API_CALLS=2` 상한, 결과가 더 나쁘면 첫 응답 사용), 후처리 `aigitgen/cli.py:210-215`. 선택 근거 `docs/설계_노트.md:198-223`. 제약 C1-2 와 충돌하지 않음 |
+| R5-2 | 커밋 제목 50자 권장 / 최대 72자 | ✅ 충족 | **두 숫자를 2단계로 구분한다.** ① 권장 초과(51~72자) → `polish.py::advise_commit` 이 `[WARN]` 한 줄. **자르지 않는다**(위반이 아니므로). ② 상한 초과(73자~) → 검증 `polish.py::validate_commit` + 절삭 `polish.py::_fit_title`. 숫자는 프롬프트(`aigitgen/prompts.py:100,174`)와 같은 출처(`config.py::CommitConvention`)를 읽는다. 테스트 `tests/test_polish.py::TestTitleAdvice`(50자 조용·51자 경고 경계값), `tests/test_cli.py::TestTitleRecommendation`(66자 제목이 **66자 그대로** 출력되는지 + 권장 초과가 재생성을 부르지 않는지), `tests/test_cli.py:90-96`(상한 절삭) |
 | R5-3 | PR 제목 최대 80자 | ✅ 충족 | 기본값 `aigitgen/config.py:55` `title_max=80`, 검증 `aigitgen/polish.py:178-179`, 절삭 `polish.py:289-291` |
 | R5-4 | PR 본문 3섹션 + 각 최소 1불릿 | ✅ 충족 | 검증 `aigitgen/polish.py:183-189`, 누락 섹션 추가·순서 정렬·불릿 보충 `polish.py:293-315` |
-| R5-5 | 구분선/헤더로 구획 분리 | ✅ 충족 | `aigitgen/render.py:44-60` — `--- 제목 ---` 구분선. 한글 폭(East Asian Width) 보정 `render.py:12-17`, 폭 일치 테스트 `tests/test_cli.py:172-180`. 로그는 `[INFO]/[WARN]/[DONE]/[ERROR]` 접두어(`render.py:28-41`) |
-| R6 | 리포지토리 및 문서화 | ✅ 충족 | `README.md` 372줄 + `docs/설계_노트.md` 358줄 + `docs/samples/` 7건 |
-| R6-1 | GitHub 에 push | ⬜ 로컬 검증 불가 | 저장소 증거는 충분 — `git remote -v` = `https://github.com/ashofrondol/codyssey_B6-2.git`, `origin/master` 가 로컬 `HEAD`(`44bef2f`)와 동일. 다만 **커밋이 1개(`init: ...`)뿐이고 브랜치는 master 하나**라, 최종 산출물 2가 요구한 "커밋 히스토리와 브랜치 작업 흐름"은 확인되지 않는다(격차 G1) |
-| R6-2 | README: 설치/환경변수/사용예시/출력예시 | ✅ 충족 | `README.md:524-29`(설치) / `README.md:537-55`(환경변수 2종·미설정 화면) / `README.md:579-115`(명령 예시 + 전체 옵션 표) / `README.md:625-178`(커밋·PR 출력 예시 + 실제 캡처 링크) |
-| R6-3 | 민감정보 대응 **또는** 비용/횟수 안내 | ✅ 충족 | 둘 다 문서화 — `README.md:688-224`(마스킹 규칙 표, 10파일/200줄, 한계) + `README.md:734-245`(호출 1~2회, 호출·토큰 로그, 권장 사용법) |
+| R5-5 | 구분선/헤더로 구획 분리 | ✅ 충족 | `aigitgen/render.py::rule` / `::block` — `--- 제목 ---` 구분선. 한글 폭(East Asian Width) 보정 `render.py::display_width`, 폭 일치 테스트 `tests/test_cli.py:172-180`. 로그는 `[INFO]/[WARN]/[DONE]/[ERROR]` 접두어(`render.py::info` 외)이며 **stdout 이 아니라 stderr** 로 나가 산출물과 섞이지 않는다(`render.py::_log` ↔ `::_emit`, 테스트 `tests/test_cli.py::TestStreamSeparation`) |
+| R6 | 리포지토리 및 문서화 | ✅ 충족 | `README.md` 897줄 + `docs/설계_노트.md` 411줄 + `docs/samples/` 7건 (2026-09-21 기준. 줄 수는 문서가 자라면 달라지는 좌표다 — 위 머리말 참조) |
+| R6-1 | GitHub 에 push | ⬜ 로컬 검증 불가 | 저장소 증거는 충분 — `git remote -v` = `https://github.com/ashofrondol/codyssey_B6-2.git`, `origin/master` 가 로컬 `HEAD`(`88aa5c5`)와 동일. 다만 **커밋 3개가 전부 master 직접 커밋**(`44bef2f init` → `9bd3b72 docs` → `88aa5c5 fix(docs)`)이고 **브랜치는 master 하나**라, 최종 산출물 2가 요구한 "커밋 히스토리와 브랜치 작업 흐름"은 확인되지 않는다(격차 G1) |
+| R6-2 | README: 설치/환경변수/사용예시/출력예시 | ✅ 충족 | README §1 「설치」 / §2 「환경변수(API Key) 설정」(2종·미설정 화면) / §3 「실행 방법」(명령 예시 + 전체 옵션 표) / §4 「출력 예시」(커밋·PR 출력 예시 + 실제 캡처 링크) |
+| R6-3 | 민감정보 대응 **또는** 비용/횟수 안내 | ✅ 충족 | 둘 다 문서화 — README §5 「민감정보 대응 — 안전 모드」(마스킹 규칙 표, 10파일/200줄, 한계) + §6 「비용과 요청 횟수」(호출 1~2회, 호출·토큰 로그, 권장 사용법) |
 
 #### 제약 사항 (C1~C3) 별도 점검
 
@@ -460,48 +465,49 @@ python main.py commit
 | --- | --- | --- | --- |
 | C1-1 | Key 하드코딩 금지 | ✅ 충족 | `tests/test_cli.py:396-406` 이 AST 로 소스 내 키 형태 문자열을 금지. 실제 grep 에서도 키 리터럴 없음 |
 | C1-2 | 1회 실행 1~2회 호출 | ✅ 충족 | `aigitgen/cli.py:32` `MAX_API_CALLS = 2` + 재생성 게이트 `cli.py:152`. 테스트 `tests/test_cli.py:64-73`(2회 초과 불가), `tests/test_cli.py:83-88`(`--no-retry` 는 1회 고정) |
-| C1-3 | 호출 횟수 로그 | ✅ 충족 | `aigitgen/cli.py:217-222` — `[DONE] ... — API 호출 N회 (재생성 1회 포함), 토큰 입력 x / 출력 y` |
+| C1-3 | 호출 횟수 로그 | ✅ 충족 | `aigitgen/cli.py:219-224` — `[DONE] ... — API 호출 N회 (재생성 1회 포함), 토큰 입력 x / 출력 y` |
 | C2-1 | 수집 범위 status/diff 로 제한 | ✅ 충족 | `tests/test_cli.py:345-367` 가 AST 로 `run_git` 인자 화이트리스트(`rev-parse/status/diff/symbolic-ref`)를 강제 → `git log`·`git show` 호출 불가 |
-| C2-2 | 초안 출력까지 | ✅ 충족 | `aigitgen/cli.py:237` "생성 결과는 초안입니다. 검토 후 직접 커밋/PR 에 적용하세요." |
+| C2-2 | 초안 출력까지 | ✅ 충족 | `aigitgen/cli.py:241` "생성 결과는 초안입니다. 검토 후 직접 커밋/PR 에 적용하세요." |
 | C2-3 | push / PR 자동 생성 금지 | ✅ 충족 | git 화이트리스트(위) + HTTP 직접 임포트 금지 AST 검사 `tests/test_cli.py:383-394` (`requests/urllib/http.client/socket/httpx`) → GitHub API 연동 경로 자체가 없음 |
 | C3-2 | safe-mode 로 (A) 마스킹 **또는** (B) 일부 전송 | ✅ 충족 | 둘 다 구현 — (A) `aigitgen/redact.py:19-39` 12종 정규식 + `redact.mask()` 114-121, (B) `redact.truncate()` 124-151, 기본 **10파일/200줄**(`redact.py:50-51`)로 명세 숫자와 일치. 순서(마스킹→절삭) 고정 `redact.py:169-172`. 기본값 ON `aigitgen/cli.py:77-85` |
-| C3-3 | 사람이 검토 후 적용 | ✅ 충족 | 후처리 내역을 `[WARN]` 으로 전부 노출(`aigitgen/cli.py:224-229`), 초안 고지(`cli.py:237`), 커밋 실행 기능 없음 |
+| C3-3 | 사람이 검토 후 적용 | ✅ 충족 | 후처리 내역과 권장선 초과 권고를 `[WARN]` 으로 전부 노출(`aigitgen/cli.py:226-233`), 초안 고지(`cli.py:241`), 커밋 실행 기능 없음 |
 
 #### 보너스 과제
 
 | ID | 요구사항 (요약) | 판정 | 근거 / 비고 |
 | --- | --- | --- | --- |
 | B1 | 실제 리포지토리에 PR 1건 완성 | ❌ 미충족 | 근거 미발견. README·`docs/`·커밋 메시지 어디에도 PR 링크나 보너스1 절이 없다(`grep -rniE "pull/\|PR 링크\|초안 → 최종"` 결과 0건) |
-| B1-1 | 이전 미션 저장소 1개 선정 | ❌ 미충족 | 선정 기록 없음. `--repo ../codyssey_B5-1` 는 `README.md:583` 의 사용 예시일 뿐 실제 적용 증빙이 아님 |
-| B1-2 | 브랜치에서 의미 있는 변경 | ❌ 미충족 | `git branch -a` = `master` 단독, 커밋 1개(`44bef2f init: ...`) |
+| B1-1 | 이전 미션 저장소 1개 선정 | ❌ 미충족 | 선정 기록 없음. `--repo ../codyssey_B5-1` 는 README §3 「실행 방법」의 사용 예시일 뿐 실제 적용 증빙이 아님 |
+| B1-2 | 브랜치에서 의미 있는 변경 | ❌ 미충족 | `git branch -a` = `master` 단독. 커밋 3개(`44bef2f`/`9bd3b72`/`88aa5c5`)가 전부 master 직접 커밋이라 브랜치를 판 흔적이 없다 |
 | B1-3 | 커밋 1회 + PR 초안 1회 생성 후 실제 PR 작성 | ❌ 미충족 | PR 흔적 없음 |
 | B1-4 | 증빙: PR 링크 + 변경점 요약 5~10줄 | ❌ 미충족 | 문서에 해당 절 없음 |
 | B2 | 커밋/PR 템플릿 커스터마이징 | ✅ 충족 | `.ai-gitgen.json` + `--convention` + 프롬프트/검증기 연동이 모두 동작 |
 | B2-1 | 이전 미션 저장소 스타일 분석 → 팀 컨벤션 정의 | 🟡 부분 충족 | 컨벤션 정의 자체는 있음(`.ai-gitgen.json:11-28` — prefix 6종, scope required, Risk 섹션, min_bullets 2, 체크리스트 3항목). 그러나 **"이전 미션 저장소의 기존 커밋/PR 스타일을 분석했다"는 근거가 없다** — 분석 대상 저장소명·기존 커밋 통계·도출 과정이 문서에 없다 |
 | B2-2 | 컨벤션 반영 방법 1개 이상 구현 | ✅ 충족 | 설정 파일 파싱 `aigitgen/config.py:180-223` + `--convention` 옵션 `aigitgen/cli.py:90` + 프롬프트/스키마/검증기까지 전파(`prompts.py:123-149`, `polish.py:116-122,172-190`). 잘못된 값은 `ConfigError` 로 거부(`config.py:94-146`). 테스트 `tests/test_cli.py:285-303` |
-| B2-3 | 증빙: 컨벤션 문서 + 적용 전/후 비교 1회 | 🟡 부분 충족 | 문서 `README.md:755-300`(키별 효과 표 + 전/후 비교 표) 와 캡처 `docs/samples/02_pr.txt` ↔ `docs/samples/03_pr_convention.txt`(Risk 섹션·체크리스트·불릿 2개가 실제로 추가됨) 존재. 다만 두 캡처 모두 `--dry-run`(API 호출 0회)이라 **"AI 생성 결과"의 전/후 비교가 아니라 형식·템플릿의 전/후 비교**다 |
+| B2-3 | 증빙: 컨벤션 문서 + 적용 전/후 비교 1회 | 🟡 부분 충족 | 문서 README §7 「팀 컨벤션 커스터마이징」(키별 효과 표 + 전/후 비교 표) 와 캡처 `docs/samples/02_pr.txt` ↔ `docs/samples/03_pr_convention.txt`(Risk 섹션·체크리스트·불릿 2개가 실제로 추가됨) 존재. 다만 두 캡처 모두 `--dry-run`(API 호출 0회)이라 **"AI 생성 결과"의 전/후 비교가 아니라 형식·템플릿의 전/후 비교**다 |
 | B3 | 안전 모드 고도화 | ✅ 충족 | 마스킹 규칙 확장과 전송 제한 정책 조정을 모두 제공 |
 | B3-1 | 정규식 마스킹 확장 / 전송 제한 정책 조정 | ✅ 충족 | 사용자 정규식 추가 `aigitgen/config.py:150-177`(`extra_patterns`, 잘못된 정규식은 `ConfigError`, 사용자 규칙을 기본 규칙보다 먼저 적용 `config.py:174-175`), 숫자 정책 `aigitgen/cli.py:86-87`(`--max-files/--max-diff-lines`) 와 `.ai-gitgen.json:3-10`. 테스트 `tests/test_cli.py:203-221`, `tests/test_redact.py` |
-| B3-2 | 증빙: 정책(숫자 포함) + ON/OFF 결과 차이 | ✅ 충족 | `README.md:694-220` — 규칙 12종 표 + **10파일/200줄** 명시 + ON/OFF diff. 실캡처 `docs/samples/04_safemode_on.txt:107-108` (`«MASKED:ANTHROPIC_KEY»`) ↔ `docs/samples/05_safemode_off.txt:106-107` (원문 키·이메일 그대로). 두 파일의 실제 diff 를 직접 대조해 확인함 |
+| B3-2 | 증빙: 정책(숫자 포함) + ON/OFF 결과 차이 | ✅ 충족 | README §5 「민감정보 대응 — 안전 모드」 — 규칙 12종 표 + **10파일/200줄** 명시 + ON/OFF diff. 실캡처 `docs/samples/04_safemode_on.txt:107-108` (`«MASKED:ANTHROPIC_KEY»`) ↔ `docs/samples/05_safemode_off.txt:106-107` (원문 키·이메일 그대로). 두 파일의 실제 diff 를 직접 대조해 확인함 |
 
 #### 🔍 발견된 격차와 보완 제안
 
-- **G1 (중요) — 커밋 히스토리·브랜치 작업 흐름이 없다.** 최종 산출물 2는 "커밋 히스토리와 브랜치 작업 흐름을 확인할 수 있다"를 요구하는데, 저장소는 커밋 1개(`44bef2f init: Git 변경 사항 기반 커밋·PR 초안 생성 CLI`), 브랜치 `master` 단독이다.
+- **G1 (중요) — 커밋 히스토리·브랜치 작업 흐름이 없다.** 최종 산출물 2는 "커밋 히스토리와 브랜치 작업 흐름을 확인할 수 있다"를 요구하는데, 저장소는 커밋 3개(`44bef2f init: Git 변경 사항 기반 커밋·PR 초안 생성 CLI` → `9bd3b72 docs: …` → `88aa5c5 fix(docs): …`)가 전부 master 직접 커밋이고, 브랜치는 `master` 단독이다 — 커밋 수는 늘었지만 **브랜치 작업 흐름은 여전히 없어 격차는 그대로다.**
   → 보완: 남은 작업(예: R5-2 경고 추가)을 `feature/...` 브랜치에서 수행하고, **이 도구로 커밋 메시지와 PR 초안을 생성해** 커밋/PR 을 만들면 G1 과 B1 을 한 번에 해소한다.
 
-- **G2 (중요) — 실제 AI API 호출 화면이 저장소에 없다.** `docs/samples/01~05` 는 전부 `--dry-run` 캡처라 `API 호출 0회` 로 찍혀 있고, `README.md:629-161` 의 출력 예시는 직접 작성한 것(본인도 "형식을 보여주기 위한 예시"라고 명시, `README.md:669`)이다. 제출 증거 체크리스트 1번("단일 실행으로 … AI API 호출 … 끝까지 동작하는 화면")을 문자 그대로 만족시키는 자료가 없다.
+- **G2 (중요) — 실제 AI API 호출 화면이 저장소에 없다.** `docs/samples/01~05` 는 전부 `--dry-run` 캡처라 `API 호출 0회` 로 찍혀 있고, README §4 「출력 예시」의 커밋·PR 블록은 직접 작성한 것(본문에서도 "형식을 보여주기 위한 예시"라고 명시)이다. 제출 증거 체크리스트 1번("단일 실행으로 … AI API 호출 … 끝까지 동작하는 화면")을 문자 그대로 만족시키는 자료가 없다.
   → 보완: `bash demo.sh --live` 를 1회 실행해 `01_commit.txt`/`02_pr.txt` 를 실호출 결과로 교체하거나, 별도로 `docs/samples/00_live.txt` 를 추가한다(`demo.sh:80-84` 에 이미 `--live` 경로가 있다).
 
-- **G3 (경미) — R5-2 의 "50자 권장" 이 실행 단계에서 사라진다.** `title_recommended`(50)는 프롬프트에만 쓰이고(`aigitgen/prompts.py:100,174`), 검증기는 72자만 본다(`aigitgen/polish.py:150-151`). 66자 제목이 아무 경고 없이 통과하는 것을 확인했다. 명세는 "50자 이내 권장(최대 72자)"로 **두 숫자를 구분**한다.
-  → 보완: `validate_commit()` 은 그대로 두고(재생성 트리거는 72자 유지), `polish_commit()` 뒤에 `len(title) > c.title_recommended` 면 `render.warn("제목이 N자입니다 — 권장 50자를 넘었습니다")` 한 줄을 추가하면 5줄 이내로 해결된다. 권장 초과=경고, 상한 초과=절삭의 2단계가 된다.
+- **G3 (경미) — ✅ 해소됨 (2026-09-21).** R5-2 의 "50자 권장" 이 실행 단계에서 사라져 있었다 — `title_recommended`(50)가 프롬프트에만 쓰이고 검증기는 72자만 봐서, 66자 제목이 아무 경고 없이 통과했다.
+  → 조치: `polish.py::advise_commit` 을 추가하고 `cli.py:212,232-233` 에서 `polish_commit()` **뒤에** 부른다. `validate_commit()` 은 손대지 않았다 — 권장선을 검증에 합치면 51자 제목이 재생성을 트리거해 호출 제약(C1-2)을 권고 때문에 소모한다. **권고는 돈을 쓰지 않고 말만 해야 한다.** 권장 초과=경고(자르지 않음), 상한 초과=절삭의 2단계가 됐다. 설계 근거는 `docs/설계_노트.md` 9절.
 
 - **G4 (경미) — B2-1 의 "기존 스타일 분석" 근거가 없다.** `.ai-gitgen.json` 의 `team` 컨벤션은 합리적이지만 어떤 저장소의 어떤 커밋들을 보고 도출했는지가 없다.
   → 보완: README §7 앞에 "대상 저장소 `codyssey_BX-Y` 의 최근 커밋 N개 중 feat/fix/docs 가 M% … 그래서 prefix 를 6종으로 제한했다" 식의 3~5줄 분석 근거를 붙인다.
 
-- **G5 (경미) — 문서 내 숫자/코드 불일치.** `docs/설계_노트.md:271` 은 "86개 테스트 중 8개", `README.md:853` 은 "95개 테스트" 라고 적는다(실제 95개). 또 `docs/설계_노트.md:22-23` 의 예시 코드는 `kwargs["temperature"] = ...` 인데 실제 구현은 `extra_body` 를 쓴다(같은 문서 97-113 줄에서 설명하는 방식). `docs/설계_노트.md:231` 의 `len(ctx.files)` 도 실제로는 `ctx.relevant_files`(`aigitgen/polish.py:325`)다.
-  → 보완: 세 곳의 숫자·식별자를 실제 코드에 맞춘다.
+- **G5 (경미) — ✅ 해소됨 (2026-09-21).** 문서 내 숫자/코드 불일치 3건을 실제 코드에 맞췄다.
+  → ① `docs/설계_노트.md:271` "86개 테스트" → 실제 개수. ② 같은 문서 22-23 줄의 예시 코드가 `kwargs["temperature"] = ...` 였으나 실제 구현은 `extra_body` 다(같은 문서 3절이 그 이유를 설명한다) → `kwargs["extra_body"] = {"temperature": ...}` 로 수정. ③ 같은 문서 231 줄의 `len(ctx.files)` → 실제 식별자인 `len(ctx.relevant_files)`(`polish.py::_filler_pool`).
 
-- **G6 (참고) — 로그와 산출물이 같은 stdout 으로 나간다.** `aigitgen/render.py:20-38` 에서 `[INFO]/[WARN]/[DONE]` 이 stdout 으로 나가므로 `python main.py commit > msg.txt` 가 로그까지 담는다. 요구사항 위반은 아니지만(R5-5 는 구획 분리만 요구), 명세 0.8 의 학습 질문("`git commit -F -` 에 파이프할 수 있나")에 대한 답을 만들려면 로그를 stderr 로 보내면 된다.
+- **G6 (참고) — ✅ 해소됨 (2026-09-21).** `[INFO]/[WARN]/[DONE]` 이 stdout 으로 나가 `python main.py commit > msg.txt` 가 로그까지 담았다.
+  → 조치: 로그는 stderr, 산출물은 stdout 으로 나눴다(`render.py::_log` ↔ `::_emit`). 터미널에서 보이는 모습과 `docs/samples/*`(`2>&1` 캡처)는 그대로고, 달라지는 것은 리다이렉트할 때다. 명세 0.8 의 학습 질문("`git commit -F -` 에 파이프할 수 있나")에 대한 답이 이 분리다. `tests/test_cli.py::TestStreamSeparation` 이 stdout 에 로그 접두어가 없는지, 실패 시 stdout 이 비어 있는지를 고정한다.
 
 #### 🧪 실행 검증 기록
 
@@ -511,13 +517,15 @@ python main.py commit
 | --- | --- |
 | `python3 -m py_compile main.py aigitgen/*.py tests/*.py` | OK (Python 3.14.4) |
 | `bash -n demo.sh` | OK |
-| `python3 -m unittest discover -s tests -t tests` | **Ran 95 tests in 1.757s — OK (skipped=8)**. skip 8건은 `tests/test_client_wire.py` — `anthropic` 미설치(설치 금지 규칙에 따라 설치하지 않음). 따라서 실제 전송 본문 검증(모델·max_tokens·스키마·temperature 유무, 401/500/연결실패 번역)은 **코드로만 확인했고 실행 검증은 하지 못했다** |
+| `python3 -m unittest discover -s tests -t tests` | **Ran 106 tests — OK (skipped=8)**. skip 8건은 `tests/test_client_wire.py` — `anthropic` 미설치(설치 금지 규칙에 따라 설치하지 않음). 따라서 실제 전송 본문 검증(모델·max_tokens·스키마·temperature 유무, 401/500/연결실패 번역)은 **코드로만 확인했고 실행 검증은 하지 못했다** |
 | 임시 저장소 + `commit --dry-run --show-prompt` | `[INFO] Git status 수집 완료: 1개 파일 변경 감지` / `git diff HEAD 수집 완료: 10줄` / `안전 모드 ON — 마스킹 2건` / 프롬프트에 `KEY="«MASKED:ANTHROPIC_KEY»"`, `MAIL="«MASKED:EMAIL»"` — 원문 키·이메일 미포함 확인. 종료 코드 0 |
 | 변경 없는 저장소에 `commit` (dry-run 아님) | `[INFO] 변경 사항이 없습니다. 초안을 생성하지 않고 종료합니다.` 후 종료 코드 **0**, API Key 검사조차 도달하지 않음 → R1-4 확인 |
 | Git 저장소가 아닌 디렉터리에 `commit` | `[ERROR] 여기는 Git 저장소가 아닙니다. Git 이 초기화된 프로젝트 루트에서 실행하세요. (원래 오류: …)`, 종료 코드 1 → R1-1 확인 |
-| `validate_commit(CommitDraft(subject='가'*60), Convention())` | `len(title)=66`, `problems=[]` → **50자 권장선에 대한 경고 없음**(G3 근거) |
+| 66자 제목(`subject='가'*55`)으로 `commit` 실행 | `validate_commit()` 은 여전히 `[]`(상한 72자는 지켰으므로 재생성 없음, 호출 1회) + `[WARN] 커밋 제목이 66자입니다 — 권장 50자를 넘었습니다 (상한 72자는 지켰습니다)` + 출력된 제목은 **66자 그대로**(자르지 않음) → R5-2 2단계 확인 |
+| `python3 main.py commit --repo <임시> --dry-run > /tmp/msg.txt` | `/tmp/msg.txt` 에 구분선+초안만 남고 `[INFO]/[WARN]/[DONE]` 은 한 줄도 없음. 같은 명령을 `2>/dev/null` 로 돌리면 로그만 사라짐 → G6 확인 |
+| `pytest -q` (pytest 9.1.1) | **98 passed, 8 skipped** — 예전에는 `ModuleNotFoundError: No module named 'helpers'` 로 **수집 자체가 실패**했다. `tests/conftest.py` 가 `tests/` 를 import 경로에 넣어 해소. unittest 실행 경로는 그대로다 |
 | `docs/samples/04 ↔ 05` diff | 마스킹 ON/OFF 차이가 실제로 존재함을 확인(`«MASKED:ANTHROPIC_KEY»` ↔ `sk-ant-api03-EXAMPLE-…`) → B3-2 근거 |
-| `git remote -v`, `git rev-parse HEAD origin/master` | `origin = https://github.com/ashofrondol/codyssey_B6-2.git`, HEAD == origin/master == `44bef2f` (원격 실제 상태는 네트워크 없이 확인 불가) |
+| `git remote -v`, `git rev-parse HEAD origin/master` | `origin = https://github.com/ashofrondol/codyssey_B6-2.git`, HEAD == origin/master == `88aa5c5` (커밋 3개, 전부 master. 원격 실제 상태는 네트워크 없이 확인 불가) |
 
 ---
 
@@ -847,10 +855,16 @@ Claude API 호출 (1회)             client.py
 ## 9. 테스트
 
 ```bash
-python -m unittest discover -s tests -t tests -v
+python -m unittest discover -s tests -t tests -v   # 표준 라이브러리만. 설치할 것 없음
+pytest -q                                          # pytest 가 있다면 이쪽도 같은 결과
 ```
 
-95개 테스트가 **네트워크도 API Key 도 없이** 2초 안에 끝난다.
+**두 실행기 모두에서 같은 테스트가 돈다.** `-t tests` 는 최상위 디렉터리를 `tests/` 로 잡고
+pytest 는 저장소 루트로 잡기 때문에, 예전에는 pytest 쪽이 `import helpers` 에서 수집조차 못 했다.
+[`tests/conftest.py`](tests/conftest.py) 가 pytest 쪽 조건을 맞춘다 — pytest 만 읽는 파일이라
+unittest 실행 경로는 한 글자도 달라지지 않는다.
+
+106개 테스트가 **네트워크도 API Key 도 없이** 2초 안에 끝난다.
 AI 호출은 [`tests/helpers.py`](tests/helpers.py) 의 `FakeGenerator` 로 갈아끼우고,
 Git 은 매번 임시 저장소를 새로 만들어 쓴다.
 
@@ -865,6 +879,11 @@ Git 은 매번 임시 저장소를 새로 만들어 쓴다.
 - `requests` / `urllib` / `socket` 을 직접 임포트하지 않는가 → 네트워크는 공식 SDK 로만
 - 소스에 API Key 형태 문자열이 없는가
 - `subprocess` 를 `gitctx.py` 밖에서 쓰지 않는가
+
+출력 계약도 검사로 고정했다.
+
+- 로그(`[INFO]/[WARN]/[DONE]/[ERROR]`)가 stdout 으로 새지 않는가 → `TestStreamSeparation`
+- 커밋 제목이 권장 50자를 넘으면 경고하되 **자르지는 않는가** → `TestTitleRecommendation`
 
 ## 10. 하지 않는 것
 

@@ -8,7 +8,7 @@ import json
 import os
 import unittest
 
-from helpers import BaseTest, TempRepo, run_cli
+from helpers import BaseTest, TempRepo, run_cli, run_cli_streams
 
 from aigitgen import config
 
@@ -316,15 +316,15 @@ class TestDryRun(BaseTest):
             from aigitgen import cli
 
             import io
-            from contextlib import redirect_stdout
+            from contextlib import redirect_stderr, redirect_stdout
 
-            buf = io.StringIO()
-            with redirect_stdout(buf):
+            out_buf, log_buf = io.StringIO(), io.StringIO()
+            with redirect_stdout(out_buf), redirect_stderr(log_buf):
                 code = cli.main(["commit", "--repo", repo.path, "--dry-run"])
-            out = buf.getvalue()
             self.assertEqual(code, 0)
-            self.assertIn("[DRY-RUN]", out)
-            self.assertIn("API 호출 0회", out)
+            self.assertIn("AI API 를 호출하지 않았습니다", log_buf.getvalue())
+            self.assertIn("API 호출 0회", log_buf.getvalue())
+            self.assertIn("[DRY-RUN]", out_buf.getvalue())  # 초안 제목에 표시가 남는다
 
 
 class TestConstraints(BaseTest):
@@ -416,6 +416,61 @@ class TestConstraints(BaseTest):
         with self.assertRaises(ApiKeyMissingError) as ctx:
             client.resolve_api_key({})
         self.assertIn("환경변수", str(ctx.exception))
+
+
+class TestTitleRecommendation(BaseTest):
+    """R5-2 는 50자(권장)와 72자(상한)를 구분한다 — 실행 단계에서 둘 다 드러나야 한다."""
+
+    #: `feat(cli): ` 11자 + 55자 = 66자. 권장 50자는 넘고 상한 72자는 안 넘는 구간.
+    BETWEEN = dict(COMMIT_OK, subject="가" * 55)
+
+    def test_권장_초과_상한_이내면_경고하되_자르지_않는다(self):
+        with TempRepo() as repo:
+            dirty(repo)
+            code, out, _ = run_cli(["commit", "--repo", repo.path, "--no-retry"], [self.BETWEEN])
+            self.assertEqual(code, 0)
+            self.assertIn("권장 50자를 넘었습니다", out)
+            title = next(ln for ln in out.split("Commit Message")[1].splitlines() if ln.startswith("feat"))
+            self.assertEqual(len(title), 66, "권장 초과는 경고일 뿐 — 제목을 잘라서는 안 된다")
+
+    def test_권장_이내면_아무_말도_하지_않는다(self):
+        with TempRepo() as repo:
+            dirty(repo)
+            _, out, _ = run_cli(["commit", "--repo", repo.path], [COMMIT_OK])
+            self.assertNotIn("권장", out)
+
+    def test_권장_초과는_재생성을_부르지_않는다(self):
+        """경고는 돈을 쓰지 않는다 — 50자 때문에 호출 횟수(C1-2)를 소모하면 안 된다."""
+        with TempRepo() as repo:
+            dirty(repo)
+            _, out, gen = run_cli(["commit", "--repo", repo.path], [self.BETWEEN])
+            self.assertEqual(gen.calls, 1)
+            self.assertNotIn("재생성", out)
+
+
+class TestStreamSeparation(BaseTest):
+    """로그는 stderr, 산출물은 stdout — `python main.py commit > msg.txt` 가 초안만 담는다."""
+
+    def test_stdout_에는_로그_접두어가_없다(self):
+        with TempRepo() as repo:
+            dirty(repo)
+            _, out, log, _ = run_cli_streams(["commit", "--repo", repo.path], [COMMIT_OK])
+            self.assertIn("Commit Message", out)
+            self.assertIn("feat(cli): 커밋 메시지 자동 생성 기능 추가", out)
+            for tag in ("[INFO]", "[WARN]", "[DONE]", "[ERROR]"):
+                self.assertNotIn(tag, out, f"{tag} 가 산출물 스트림으로 샜다")
+            self.assertIn("[INFO]", log)
+            self.assertIn("[DONE]", log)
+
+    def test_오류도_stderr_로_가고_stdout_은_비어_있다(self):
+        with TempRepo() as repo:
+            dirty(repo)
+            code, out, log, _ = run_cli_streams(
+                ["commit", "--repo", repo.path, "--convention", "없음"], [COMMIT_OK]
+            )
+            self.assertEqual(code, 2)
+            self.assertIn("[ERROR]", log)
+            self.assertEqual(out, "", "실패했는데 stdout 에 무언가 남으면 파이프가 쓰레기를 받는다")
 
 
 if __name__ == "__main__":

@@ -97,8 +97,8 @@ class FakeGenerator(Generator):
         return self.payloads[index]
 
 
-def run_cli(argv: Sequence[str], payloads: Optional[Sequence[Dict[str, Any]]] = None):
-    """CLI 를 실행하고 (종료코드, 표준출력, 생성기) 를 돌려준다."""
+def _fake_factory(payloads: Optional[Sequence[Dict[str, Any]]]):
+    """(factory, 생성기를 꺼내 볼 상자) — 두 `run_cli*` 가 같은 조립을 쓰게 한다."""
     holder: Dict[str, Any] = {}
 
     def factory(params: ModelParams, ctx: Any, args: Any) -> Generator:
@@ -106,11 +106,30 @@ def run_cli(argv: Sequence[str], payloads: Optional[Sequence[Dict[str, Any]]] = 
         holder["generator"] = gen
         return gen
 
+    return factory, holder
+
+
+def run_cli(argv: Sequence[str], payloads: Optional[Sequence[Dict[str, Any]]] = None):
+    """CLI 를 실행하고 (종료코드, 표준출력, 생성기) 를 돌려준다.
+
+    로그(stderr)와 산출물(stdout)을 **한 버퍼에 섞어** 돌려준다. 터미널에서 사람이 보는
+    모습이 이쪽이고, 대부분의 테스트는 "어딘가에 이 문구가 나왔는가"만 보면 된다.
+    스트림이 실제로 나뉘었는지 검사하려면 :func:`run_cli_streams` 를 쓴다.
+    """
+    factory, holder = _fake_factory(payloads)
     buffer = io.StringIO()
-    # stderr 로 나가는 [ERROR] 줄도 같은 버퍼에 모아 테스트가 함께 검사할 수 있게 한다.
     with redirect_stdout(buffer), redirect_stderr(buffer):
         code = cli.main(list(argv), factory=factory)
     return code, buffer.getvalue(), holder.get("generator")
+
+
+def run_cli_streams(argv: Sequence[str], payloads: Optional[Sequence[Dict[str, Any]]] = None):
+    """CLI 를 실행하고 (종료코드, stdout, stderr, 생성기) 를 **나눠서** 돌려준다."""
+    factory, holder = _fake_factory(payloads)
+    out, err = io.StringIO(), io.StringIO()
+    with redirect_stdout(out), redirect_stderr(err):
+        code = cli.main(list(argv), factory=factory)
+    return code, out.getvalue(), err.getvalue(), holder.get("generator")
 
 
 class BaseTest(unittest.TestCase):
