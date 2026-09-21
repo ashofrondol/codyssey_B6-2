@@ -451,8 +451,8 @@ python main.py commit
 | R5-5 | 구분선/헤더로 구획 분리 | ✅ 충족 | `aigitgen/render.py:44-60` — `--- 제목 ---` 구분선. 한글 폭(East Asian Width) 보정 `render.py:12-17`, 폭 일치 테스트 `tests/test_cli.py:172-180`. 로그는 `[INFO]/[WARN]/[DONE]/[ERROR]` 접두어(`render.py:28-41`) |
 | R6 | 리포지토리 및 문서화 | ✅ 충족 | `README.md` 372줄 + `docs/설계_노트.md` 358줄 + `docs/samples/` 7건 |
 | R6-1 | GitHub 에 push | ⬜ 로컬 검증 불가 | 저장소 증거는 충분 — `git remote -v` = `https://github.com/ashofrondol/codyssey_B6-2.git`, `origin/master` 가 로컬 `HEAD`(`44bef2f`)와 동일. 다만 **커밋이 1개(`init: ...`)뿐이고 브랜치는 master 하나**라, 최종 산출물 2가 요구한 "커밋 히스토리와 브랜치 작업 흐름"은 확인되지 않는다(격차 G1) |
-| R6-2 | README: 설치/환경변수/사용예시/출력예시 | ✅ 충족 | `README.md:18-29`(설치) / `README.md:31-55`(환경변수 2종·미설정 화면) / `README.md:73-115`(명령 예시 + 전체 옵션 표) / `README.md:119-178`(커밋·PR 출력 예시 + 실제 캡처 링크) |
-| R6-3 | 민감정보 대응 **또는** 비용/횟수 안내 | ✅ 충족 | 둘 다 문서화 — `README.md:182-224`(마스킹 규칙 표, 10파일/200줄, 한계) + `README.md:228-245`(호출 1~2회, 호출·토큰 로그, 권장 사용법) |
+| R6-2 | README: 설치/환경변수/사용예시/출력예시 | ✅ 충족 | `README.md:524-29`(설치) / `README.md:537-55`(환경변수 2종·미설정 화면) / `README.md:579-115`(명령 예시 + 전체 옵션 표) / `README.md:625-178`(커밋·PR 출력 예시 + 실제 캡처 링크) |
+| R6-3 | 민감정보 대응 **또는** 비용/횟수 안내 | ✅ 충족 | 둘 다 문서화 — `README.md:688-224`(마스킹 규칙 표, 10파일/200줄, 한계) + `README.md:734-245`(호출 1~2회, 호출·토큰 로그, 권장 사용법) |
 
 #### 제약 사항 (C1~C3) 별도 점검
 
@@ -472,24 +472,24 @@ python main.py commit
 | ID | 요구사항 (요약) | 판정 | 근거 / 비고 |
 | --- | --- | --- | --- |
 | B1 | 실제 리포지토리에 PR 1건 완성 | ❌ 미충족 | 근거 미발견. README·`docs/`·커밋 메시지 어디에도 PR 링크나 보너스1 절이 없다(`grep -rniE "pull/\|PR 링크\|초안 → 최종"` 결과 0건) |
-| B1-1 | 이전 미션 저장소 1개 선정 | ❌ 미충족 | 선정 기록 없음. `--repo ../codyssey_B5-1` 는 `README.md:77` 의 사용 예시일 뿐 실제 적용 증빙이 아님 |
+| B1-1 | 이전 미션 저장소 1개 선정 | ❌ 미충족 | 선정 기록 없음. `--repo ../codyssey_B5-1` 는 `README.md:583` 의 사용 예시일 뿐 실제 적용 증빙이 아님 |
 | B1-2 | 브랜치에서 의미 있는 변경 | ❌ 미충족 | `git branch -a` = `master` 단독, 커밋 1개(`44bef2f init: ...`) |
 | B1-3 | 커밋 1회 + PR 초안 1회 생성 후 실제 PR 작성 | ❌ 미충족 | PR 흔적 없음 |
 | B1-4 | 증빙: PR 링크 + 변경점 요약 5~10줄 | ❌ 미충족 | 문서에 해당 절 없음 |
 | B2 | 커밋/PR 템플릿 커스터마이징 | ✅ 충족 | `.ai-gitgen.json` + `--convention` + 프롬프트/검증기 연동이 모두 동작 |
 | B2-1 | 이전 미션 저장소 스타일 분석 → 팀 컨벤션 정의 | 🟡 부분 충족 | 컨벤션 정의 자체는 있음(`.ai-gitgen.json:11-28` — prefix 6종, scope required, Risk 섹션, min_bullets 2, 체크리스트 3항목). 그러나 **"이전 미션 저장소의 기존 커밋/PR 스타일을 분석했다"는 근거가 없다** — 분석 대상 저장소명·기존 커밋 통계·도출 과정이 문서에 없다 |
 | B2-2 | 컨벤션 반영 방법 1개 이상 구현 | ✅ 충족 | 설정 파일 파싱 `aigitgen/config.py:180-223` + `--convention` 옵션 `aigitgen/cli.py:90` + 프롬프트/스키마/검증기까지 전파(`prompts.py:123-149`, `polish.py:116-122,172-190`). 잘못된 값은 `ConfigError` 로 거부(`config.py:94-146`). 테스트 `tests/test_cli.py:285-303` |
-| B2-3 | 증빙: 컨벤션 문서 + 적용 전/후 비교 1회 | 🟡 부분 충족 | 문서 `README.md:249-300`(키별 효과 표 + 전/후 비교 표) 와 캡처 `docs/samples/02_pr.txt` ↔ `docs/samples/03_pr_convention.txt`(Risk 섹션·체크리스트·불릿 2개가 실제로 추가됨) 존재. 다만 두 캡처 모두 `--dry-run`(API 호출 0회)이라 **"AI 생성 결과"의 전/후 비교가 아니라 형식·템플릿의 전/후 비교**다 |
+| B2-3 | 증빙: 컨벤션 문서 + 적용 전/후 비교 1회 | 🟡 부분 충족 | 문서 `README.md:755-300`(키별 효과 표 + 전/후 비교 표) 와 캡처 `docs/samples/02_pr.txt` ↔ `docs/samples/03_pr_convention.txt`(Risk 섹션·체크리스트·불릿 2개가 실제로 추가됨) 존재. 다만 두 캡처 모두 `--dry-run`(API 호출 0회)이라 **"AI 생성 결과"의 전/후 비교가 아니라 형식·템플릿의 전/후 비교**다 |
 | B3 | 안전 모드 고도화 | ✅ 충족 | 마스킹 규칙 확장과 전송 제한 정책 조정을 모두 제공 |
 | B3-1 | 정규식 마스킹 확장 / 전송 제한 정책 조정 | ✅ 충족 | 사용자 정규식 추가 `aigitgen/config.py:150-177`(`extra_patterns`, 잘못된 정규식은 `ConfigError`, 사용자 규칙을 기본 규칙보다 먼저 적용 `config.py:174-175`), 숫자 정책 `aigitgen/cli.py:86-87`(`--max-files/--max-diff-lines`) 와 `.ai-gitgen.json:3-10`. 테스트 `tests/test_cli.py:203-221`, `tests/test_redact.py` |
-| B3-2 | 증빙: 정책(숫자 포함) + ON/OFF 결과 차이 | ✅ 충족 | `README.md:188-220` — 규칙 12종 표 + **10파일/200줄** 명시 + ON/OFF diff. 실캡처 `docs/samples/04_safemode_on.txt:107-108` (`«MASKED:ANTHROPIC_KEY»`) ↔ `docs/samples/05_safemode_off.txt:106-107` (원문 키·이메일 그대로). 두 파일의 실제 diff 를 직접 대조해 확인함 |
+| B3-2 | 증빙: 정책(숫자 포함) + ON/OFF 결과 차이 | ✅ 충족 | `README.md:694-220` — 규칙 12종 표 + **10파일/200줄** 명시 + ON/OFF diff. 실캡처 `docs/samples/04_safemode_on.txt:107-108` (`«MASKED:ANTHROPIC_KEY»`) ↔ `docs/samples/05_safemode_off.txt:106-107` (원문 키·이메일 그대로). 두 파일의 실제 diff 를 직접 대조해 확인함 |
 
 #### 🔍 발견된 격차와 보완 제안
 
 - **G1 (중요) — 커밋 히스토리·브랜치 작업 흐름이 없다.** 최종 산출물 2는 "커밋 히스토리와 브랜치 작업 흐름을 확인할 수 있다"를 요구하는데, 저장소는 커밋 1개(`44bef2f init: Git 변경 사항 기반 커밋·PR 초안 생성 CLI`), 브랜치 `master` 단독이다.
   → 보완: 남은 작업(예: R5-2 경고 추가)을 `feature/...` 브랜치에서 수행하고, **이 도구로 커밋 메시지와 PR 초안을 생성해** 커밋/PR 을 만들면 G1 과 B1 을 한 번에 해소한다.
 
-- **G2 (중요) — 실제 AI API 호출 화면이 저장소에 없다.** `docs/samples/01~05` 는 전부 `--dry-run` 캡처라 `API 호출 0회` 로 찍혀 있고, `README.md:123-161` 의 출력 예시는 직접 작성한 것(본인도 "형식을 보여주기 위한 예시"라고 명시, `README.md:163`)이다. 제출 증거 체크리스트 1번("단일 실행으로 … AI API 호출 … 끝까지 동작하는 화면")을 문자 그대로 만족시키는 자료가 없다.
+- **G2 (중요) — 실제 AI API 호출 화면이 저장소에 없다.** `docs/samples/01~05` 는 전부 `--dry-run` 캡처라 `API 호출 0회` 로 찍혀 있고, `README.md:629-161` 의 출력 예시는 직접 작성한 것(본인도 "형식을 보여주기 위한 예시"라고 명시, `README.md:669`)이다. 제출 증거 체크리스트 1번("단일 실행으로 … AI API 호출 … 끝까지 동작하는 화면")을 문자 그대로 만족시키는 자료가 없다.
   → 보완: `bash demo.sh --live` 를 1회 실행해 `01_commit.txt`/`02_pr.txt` 를 실호출 결과로 교체하거나, 별도로 `docs/samples/00_live.txt` 를 추가한다(`demo.sh:80-84` 에 이미 `--live` 경로가 있다).
 
 - **G3 (경미) — R5-2 의 "50자 권장" 이 실행 단계에서 사라진다.** `title_recommended`(50)는 프롬프트에만 쓰이고(`aigitgen/prompts.py:100,174`), 검증기는 72자만 본다(`aigitgen/polish.py:150-151`). 66자 제목이 아무 경고 없이 통과하는 것을 확인했다. 명세는 "50자 이내 권장(최대 72자)"로 **두 숫자를 구분**한다.
@@ -498,7 +498,7 @@ python main.py commit
 - **G4 (경미) — B2-1 의 "기존 스타일 분석" 근거가 없다.** `.ai-gitgen.json` 의 `team` 컨벤션은 합리적이지만 어떤 저장소의 어떤 커밋들을 보고 도출했는지가 없다.
   → 보완: README §7 앞에 "대상 저장소 `codyssey_BX-Y` 의 최근 커밋 N개 중 feat/fix/docs 가 M% … 그래서 prefix 를 6종으로 제한했다" 식의 3~5줄 분석 근거를 붙인다.
 
-- **G5 (경미) — 문서 내 숫자/코드 불일치.** `docs/설계_노트.md:271` 은 "86개 테스트 중 8개", `README.md:347` 은 "95개 테스트" 라고 적는다(실제 95개). 또 `docs/설계_노트.md:22-23` 의 예시 코드는 `kwargs["temperature"] = ...` 인데 실제 구현은 `extra_body` 를 쓴다(같은 문서 97-113 줄에서 설명하는 방식). `docs/설계_노트.md:231` 의 `len(ctx.files)` 도 실제로는 `ctx.relevant_files`(`aigitgen/polish.py:325`)다.
+- **G5 (경미) — 문서 내 숫자/코드 불일치.** `docs/설계_노트.md:271` 은 "86개 테스트 중 8개", `README.md:853` 은 "95개 테스트" 라고 적는다(실제 95개). 또 `docs/설계_노트.md:22-23` 의 예시 코드는 `kwargs["temperature"] = ...` 인데 실제 구현은 `extra_body` 를 쓴다(같은 문서 97-113 줄에서 설명하는 방식). `docs/설계_노트.md:231` 의 `len(ctx.files)` 도 실제로는 `ctx.relevant_files`(`aigitgen/polish.py:325`)다.
   → 보완: 세 곳의 숫자·식별자를 실제 코드에 맞춘다.
 
 - **G6 (참고) — 로그와 산출물이 같은 stdout 으로 나간다.** `aigitgen/render.py:20-38` 에서 `[INFO]/[WARN]/[DONE]` 이 stdout 으로 나가므로 `python main.py commit > msg.txt` 가 로그까지 담는다. 요구사항 위반은 아니지만(R5-5 는 구획 분리만 요구), 명세 0.8 의 학습 질문("`git commit -F -` 에 파이프할 수 있나")에 대한 답을 만들려면 로그를 stderr 로 보내면 된다.
