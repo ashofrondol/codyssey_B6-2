@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="640" viewBox="0 0 880 640" role="img" aria-labelledby="title desc">
+<title id="title">python main.py commit 의 호출 순서</title>
+<desc id="desc">commit 명령 한 번이 cli.py 에서 시작해 gitctx.py(git 읽기), redact.py(비밀 가리기), prompts.py(질문지 작성), client.py(API 호출)와 Claude API, polish.py(검사·다듬기), render.py(화면 출력)를 차례로 부르는 순서를 번호 ①~⑪ 과 파일:줄로 보여 준다. 변경 사항이 없으면 ③ 에서 주황 점선을 따라 바로 종료 코드 0 으로 끝난다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="880" height="640"/>
+<text class="ts" x="24" y="26">사용자: <tspan class="mono">python main.py commit</tspan></text>
+<line class="ln ln-blue" x1="508" y1="21" x2="538" y2="21" marker-end="url(#arrow-blue)"/>
+<text class="ts" x="546" y="26">호출</text>
+<line class="ln ln-green" x1="592" y1="21" x2="622" y2="21" marker-end="url(#arrow-green)"/>
+<text class="ts" x="630" y="26">돌려받음</text>
+<line class="ln ln-orange dash" x1="702" y1="21" x2="732" y2="21" marker-end="url(#arrow-orange)"/>
+<text class="ts" x="740" y="26">변경 없을 때</text>
+<line class="zone" x1="72" y1="88" x2="72" y2="616"/>
+<line class="zone" x1="176" y1="88" x2="176" y2="95"/>
+<line class="zone" x1="176" y1="146" x2="176" y2="149"/>
+<line class="zone" x1="176" y1="174" x2="176" y2="235"/>
+<line class="zone" x1="176" y1="262" x2="176" y2="265"/>
+<line class="zone" x1="176" y1="290" x2="176" y2="291"/>
+<line class="zone" x1="176" y1="318" x2="176" y2="321"/>
+<line class="zone" x1="176" y1="346" x2="176" y2="347"/>
+<line class="zone" x1="176" y1="374" x2="176" y2="375"/>
+<line class="zone" x1="176" y1="402" x2="176" y2="487"/>
+<line class="zone" x1="176" y1="514" x2="176" y2="515"/>
+<line class="zone" x1="176" y1="542" x2="176" y2="543"/>
+<line class="zone" x1="176" y1="570" x2="176" y2="571"/>
+<line class="zone" x1="176" y1="598" x2="176" y2="616"/>
+<line class="zone" x1="280" y1="88" x2="280" y2="95"/>
+<line class="zone" x1="280" y1="122" x2="280" y2="235"/>
+<line class="zone" x1="280" y1="262" x2="280" y2="291"/>
+<line class="zone" x1="280" y1="318" x2="280" y2="347"/>
+<line class="zone" x1="280" y1="374" x2="280" y2="487"/>
+<line class="zone" x1="280" y1="514" x2="280" y2="515"/>
+<line class="zone" x1="280" y1="542" x2="280" y2="543"/>
+<line class="zone" x1="280" y1="570" x2="280" y2="571"/>
+<line class="zone" x1="280" y1="598" x2="280" y2="616"/>
+<line class="zone" x1="384" y1="88" x2="384" y2="291"/>
+<line class="zone" x1="384" y1="318" x2="384" y2="487"/>
+<line class="zone" x1="384" y1="514" x2="384" y2="515"/>
+<line class="zone" x1="384" y1="542" x2="384" y2="571"/>
+<line class="zone" x1="384" y1="598" x2="384" y2="616"/>
+<line class="zone" x1="488" y1="88" x2="488" y2="616"/>
+<line class="zone" x1="592" y1="88" x2="592" y2="404"/>
+<line class="zone" x1="592" y1="430" x2="592" y2="616"/>
+<line class="zone" x1="696" y1="88" x2="696" y2="404"/>
+<line class="zone" x1="696" y1="430" x2="696" y2="616"/>
+<line class="zone" x1="800" y1="88" x2="800" y2="616"/>
+<rect class="box" x="24" y="40" width="96" height="48" rx="8"/>
+<text class="mono tb" x="72" y="60" text-anchor="middle">cli.py</text>
+<text class="ts" x="72" y="79" text-anchor="middle">지휘자</text>
+<rect class="box" x="128" y="40" width="96" height="48" rx="8"/>
+<text class="mono tb" x="176" y="60" text-anchor="middle">gitctx.py</text>
+<text class="ts" x="176" y="79" text-anchor="middle">git 읽기</text>
+<rect class="box" x="232" y="40" width="96" height="48" rx="8"/>
+<text class="mono tb" x="280" y="60" text-anchor="middle">redact.py</text>
+<text class="ts" x="280" y="79" text-anchor="middle">비밀 가리기</text>
+<rect class="box" x="336" y="40" width="96" height="48" rx="8"/>
+<text class="mono tb" x="384" y="60" text-anchor="middle">prompts.py</text>
+<text class="ts" x="384" y="79" text-anchor="middle">질문지 작성</text>
+<rect class="box" x="440" y="40" width="96" height="48" rx="8"/>
+<text class="mono tb" x="488" y="60" text-anchor="middle">client.py</text>
+<text class="ts" x="488" y="79" text-anchor="middle">API 호출</text>
+<rect class="box" x="544" y="40" width="96" height="48" rx="8"/>
+<text class="tb" x="592" y="60" text-anchor="middle">Claude API</text>
+<text class="ts" x="592" y="79" text-anchor="middle">외부 AI 서버</text>
+<rect class="box" x="648" y="40" width="96" height="48" rx="8"/>
+<text class="mono tb" x="696" y="60" text-anchor="middle">polish.py</text>
+<text class="ts" x="696" y="79" text-anchor="middle">검사·다듬기</text>
+<rect class="box" x="752" y="40" width="96" height="48" rx="8"/>
+<text class="mono tb" x="800" y="60" text-anchor="middle">render.py</text>
+<text class="ts" x="800" y="79" text-anchor="middle">화면 출력</text>
+<path class="ln ln-blue" d="M72,102 H104 V118 H76" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="72" y1="146" x2="172" y2="146" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-green" x1="176" y1="174" x2="76" y2="174" marker-end="url(#arrow-green)"/>
+<rect class="orange" x="28" y="184" width="104" height="48" rx="8"/>
+<text x="80" y="206" text-anchor="middle"><tspan class="tb">③ </tspan><tspan class="mono">is_empty?</tspan></text>
+<text class="ts" x="80" y="223" text-anchor="middle">cli.py:172</text>
+<line class="ln ln-orange dash" x1="132" y1="208" x2="796" y2="208" marker-end="url(#arrow-orange)"/>
+<text class="ts" x="28" y="247">아니오</text>
+<line class="ln ln-blue" x1="72" y1="262" x2="276" y2="262" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-green" x1="280" y1="290" x2="76" y2="290" marker-end="url(#arrow-green)"/>
+<line class="ln ln-blue" x1="72" y1="318" x2="380" y2="318" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-green" x1="384" y1="346" x2="76" y2="346" marker-end="url(#arrow-green)"/>
+<line class="ln ln-blue" x1="72" y1="374" x2="484" y2="374" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="72" y1="402" x2="484" y2="402" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="488" y1="430" x2="588" y2="430" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-green" x1="592" y1="458" x2="492" y2="458" marker-end="url(#arrow-green)"/>
+<line class="ln ln-green" x1="488" y1="486" x2="76" y2="486" marker-end="url(#arrow-green)"/>
+<line class="ln ln-blue" x1="72" y1="514" x2="692" y2="514" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="72" y1="542" x2="692" y2="542" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="72" y1="570" x2="796" y2="570" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="72" y1="598" x2="796" y2="598" marker-end="url(#arrow-blue)"/>
+<text id="L0" x="114" y="115"><tspan class="tb">① </tspan><tspan class="mono">main() → _run()</tspan><tspan class="ts" dx="8">cli.py:245-253</tspan></text>
+<text id="L1" x="92" y="139"><tspan class="tb">② </tspan><tspan class="mono">collect()</tspan><tspan class="ts" dx="8">cli.py:167</tspan></text>
+<text id="L2" x="92" y="167"><tspan class="ts c-green">GitContext (파일 3개 · 69줄)</tspan></text>
+<rect class="bg" x="313" y="192" width="257" height="30"/>
+<text id="L3" x="319" y="213"><tspan class="ts c-orange">예 → </tspan><tspan class="mono c-orange">[INFO]</tspan><tspan class="ts c-orange" dx="6">변경 사항이 없습니다 → 종료 0</tspan></text>
+<text id="L4" x="92" y="255"><tspan class="tb">④ </tspan><tspan class="mono">_make_settings() · apply()</tspan><tspan class="ts" dx="8">cli.py:176-180</tspan></text>
+<text id="L5" x="92" y="283"><tspan class="ts c-green">가린 diff + 보고서</tspan></text>
+<text id="L6" x="92" y="311"><tspan class="tb">⑤ </tspan><tspan class="mono">build_commit_prompt() · commit_schema()</tspan><tspan class="ts" dx="8">cli.py:185-186</tspan></text>
+<text id="L7" x="92" y="339"><tspan class="ts c-green">system · user · 스키마</tspan></text>
+<text id="L8" x="92" y="367"><tspan class="tb">⑥ </tspan><tspan class="mono">factory()</tspan><tspan class="ts" dx="6">→ 키 확인</tspan><tspan class="ts" dx="8">cli.py:199</tspan></text>
+<text id="L9" x="92" y="395"><tspan class="tb">⑦ </tspan><tspan class="mono">generate()</tspan><tspan class="ts" dx="8">cli.py:149</tspan></text>
+<text id="L10" x="498" y="423"><tspan class="mono">messages.create()</tspan><tspan class="ts" dx="8">client.py:154</tspan></text>
+<text id="L11" x="498" y="451"><tspan class="mono c-green">JSON</tspan></text>
+<text id="L12" x="92" y="479"><tspan class="mono c-green">dict</tspan></text>
+<text id="L13" x="92" y="507"><tspan class="tb">⑧ </tspan><tspan class="mono">validate_commit()</tspan><tspan class="ts" dx="8">cli.py:151 · 위반 시 ⑦ 한 번 더 (cli.py:157)</tspan></text>
+<text id="L14" x="92" y="535"><tspan class="tb">⑨ </tspan><tspan class="mono">polish_commit() · advise_commit()</tspan><tspan class="ts" dx="8">cli.py:211-212</tspan></text>
+<text id="L15" x="92" y="563"><tspan class="tb">⑩ </tspan><tspan class="mono">done() → stderr</tspan><tspan class="ts" dx="8">cli.py:224</tspan></text>
+<text id="L16" x="92" y="591"><tspan class="tb">⑪ </tspan><tspan class="mono">block('Commit Message') → stdout</tspan><tspan class="ts" dx="8">cli.py:236</tspan></text>
+</svg>

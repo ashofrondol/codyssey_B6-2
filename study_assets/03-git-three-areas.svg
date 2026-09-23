@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="460" viewBox="0 0 860 460" role="img" aria-labelledby="title desc">
+<title id="title">작업 트리 · 스테이지 · HEAD — 어느 diff 가 무엇을 보나</title>
+<desc id="desc">app.py 는 수정만 하고 add 하지 않았고, staged.py 는 새로 만들어 add 했고, .env 는 미추적인 저장소에서 세 가지 diff 가 각각 무엇을 보여 주는지 비교한다. git diff 는 app.py 만, git diff --cached 는 staged.py 만, git diff HEAD 는 둘 다 보여 주며 이것이 도구의 기본값이다. .env 는 어떤 diff 에도 나오지 않아 이름만 프롬프트에 들어간다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="860" height="460"/>
+
+<text class="th" x="24" y="36">세 구역과 세 가지 diff (실측 예)</text>
+<text x="24" y="58"><tspan class="mono">git status --porcelain</tspan><tspan class="ts"> 결과:&#160;&#160;</tspan><tspan class="mono">&#160;M app.py</tspan><tspan class="ts">&#160;&#160;·&#160;&#160;</tspan><tspan class="mono">A&#160;&#160;staged.py</tspan><tspan class="ts">&#160;&#160;·&#160;&#160;</tspan><tspan class="mono">??&#160;.env</tspan></text>
+
+<!-- 세 구역 -->
+<rect class="box" x="24" y="76" width="252" height="124" rx="10"/>
+<text x="40" y="100" class="tb">작업 트리</text>
+<text x="40" y="120" class="ts">내 폴더의 실제 파일</text>
+<text x="40" y="146"><tspan class="mono">app.py&#160;&#160;&#160;&#160;x = 1</tspan><tspan class="ts">&#160;&#160;수정, add 안 함</tspan></text>
+<text x="40" y="166" class="mono">staged.py&#160;y = 2</text>
+<text x="40" y="186"><tspan class="mono">.env</tspan><tspan class="ts">&#160;&#160;미추적 (</tspan><tspan class="mono">??</tspan><tspan class="ts">)</tspan></text>
+
+<rect class="box" x="304" y="76" width="252" height="124" rx="10"/>
+<text x="320" y="100" class="tb">스테이지 (index)</text>
+<text x="320" y="120" class="ts"><tspan class="mono">git add</tspan> 한 것</text>
+<text x="320" y="146"><tspan class="mono">staged.py&#160;y = 2</tspan><tspan class="ts">&#160;&#160;추가</tspan></text>
+<text x="320" y="166" class="mono">app.py&#160;&#160;&#160;&#160;x = 0</text>
+
+<rect class="box" x="584" y="76" width="252" height="124" rx="10"/>
+<text x="600" y="100" class="tb">HEAD</text>
+<text x="600" y="120" class="ts">마지막 커밋</text>
+<text x="600" y="146" class="mono">app.py&#160;&#160;&#160;&#160;x = 0</text>
+<text x="600" y="166" class="ts">(staged.py 없음)</text>
+
+<!-- ③ 기본값 줄 하이라이트 -->
+<rect class="yellow" x="24" y="312" width="812" height="60" rx="8"/>
+
+<!-- 세로 안내선 (각 구역 가운데) -->
+<line class="ln dash" x1="150" y1="202" x2="150" y2="342"/>
+<line class="ln dash" x1="430" y1="202" x2="430" y2="290"/>
+<line class="ln dash" x1="710" y1="202" x2="710" y2="342"/>
+
+<!-- ① git diff : 작업 트리 ↔ 스테이지 -->
+<line class="ln ln-blue" x1="154" y1="244" x2="426" y2="244" marker-start="url(#arrow-blue)" marker-end="url(#arrow-blue)"/>
+<text x="290" y="235" text-anchor="middle"><tspan class="tb c-blue">① </tspan><tspan class="mono">git diff</tspan><tspan class="ts">&#160;&#160;→&#160;&#160;</tspan><tspan class="mono">app.py</tspan></text>
+
+<!-- ② 스테이지 ↔ HEAD (cached) -->
+<line class="ln ln-blue" x1="434" y1="290" x2="706" y2="290" marker-start="url(#arrow-blue)" marker-end="url(#arrow-blue)"/>
+<text x="570" y="281" text-anchor="middle"><tspan class="tb c-blue">② </tspan><tspan class="mono">git diff --cached</tspan><tspan class="ts">&#160;&#160;→&#160;&#160;</tspan><tspan class="mono">staged.py</tspan></text>
+<text x="724" y="295"><tspan class="ts">도구의 </tspan><tspan class="mono">--staged</tspan></text>
+
+<!-- ③ git diff HEAD : 작업 트리 ↔ HEAD (기본값) -->
+<line class="ln ln-blue" x1="154" y1="354" x2="706" y2="354" marker-start="url(#arrow-blue)" marker-end="url(#arrow-blue)"/>
+<text x="430" y="342" text-anchor="middle"><tspan class="tb c-blue">③ </tspan><tspan class="mono">git diff HEAD</tspan><tspan class="ts">&#160;&#160;→&#160;&#160;</tspan><tspan class="mono">app.py, staged.py</tspan></text>
+<text x="728" y="337" class="tb">이 도구의</text>
+<text x="728" y="358" class="tb">기본값</text>
+
+<!-- 하단: 데모 실측 · .env -->
+<text x="24" y="400" class="ts">전부 <tspan class="mono">git add</tspan> 한 데모 저장소에서 센 줄 수:</text>
+<text x="24" y="422"><tspan class="mono">git diff</tspan><tspan class="ts"> 0줄 · </tspan><tspan class="mono">--cached</tspan><tspan class="ts"> 69줄 · </tspan><tspan class="mono">HEAD</tspan><tspan class="ts"> 69줄</tspan></text>
+
+<rect class="red" x="496" y="386" width="340" height="52" rx="10"/>
+<text x="666" y="407" text-anchor="middle"><tspan class="mono c-red">.env</tspan><tspan class="ts"> 는 어떤 diff 에도 없음</tspan></text>
+<text x="666" y="427" text-anchor="middle" class="ts">→ 이름만 프롬프트에 (내용 0)</text>
+</svg>

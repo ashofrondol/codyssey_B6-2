@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="520" viewBox="0 0 860 520" role="img" aria-labelledby="title desc">
+<title id="title">어디서 실패하든 한 줄 안내와 번호표</title>
+<desc id="desc">실패가 일어난 곳에 따라 GitError(1), ConfigError(2), ApiKeyMissingError(3), ApiCallError(4) 예외가 정해져 있고, Ctrl+C 는 130 으로 끝난다. API 호출의 429·5xx·연결 오류는 SDK 가 먼저 두 번 더 시도한 뒤에야 ApiCallError 가 된다. cli.main 이 이 예외들을 한곳에서 받아 stderr 에 [ERROR] 한 줄을 쓰고 종료 코드를 돌려준다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="860" height="520"/>
+<text class="th" x="24" y="34">실패 지점 → 예외 → 종료 코드</text>
+<text class="ts" x="24" y="56">왼쪽에서 오른쪽으로 읽는다 · 빨강 = 예외(오류 종류) · 번호표 = 프로그램이 끝날 때 남기는 종료 코드</text>
+<text class="tb" x="170" y="88" text-anchor="middle">어디서</text>
+<text class="tb" x="438" y="88" text-anchor="middle">무엇으로</text>
+<text class="tb" x="592" y="88" text-anchor="middle">번호표</text>
+<rect class="box" x="24" y="100" width="292" height="48" rx="10"/>
+<text x="170" y="120" text-anchor="middle" class="tb">git 단계</text>
+<text x="170" y="140" text-anchor="middle" class="ts">저장소 아님 · 경로 없음 · git 없음 · 30초 초과</text>
+<line class="ln" x1="316" y1="124" x2="344" y2="124" marker-end="url(#arrow)"/>
+<rect class="red" x="348" y="100" width="180" height="48" rx="10"/>
+<text x="438" y="129" text-anchor="middle" class="mono c-red">GitError</text>
+<line class="ln" x1="528" y1="124" x2="556" y2="124" marker-end="url(#arrow)"/>
+<rect class="box" x="560" y="100" width="64" height="48" rx="10"/>
+<text x="592" y="132" text-anchor="middle" class="mono tb" style="font-size:22px">1</text>
+<rect class="box" x="24" y="160" width="292" height="68" rx="10"/>
+<text x="170" y="182" text-anchor="middle" class="tb">옵션·설정</text>
+<text x="170" y="201" text-anchor="middle" class="ts">--temperature 1.5 · --max-tokens 50</text>
+<text x="170" y="219" text-anchor="middle" class="ts">없는 컨벤션 · 깨진 JSON</text>
+<line class="ln" x1="316" y1="194" x2="344" y2="194" marker-end="url(#arrow)"/>
+<rect class="red" x="348" y="160" width="180" height="68" rx="10"/>
+<text x="438" y="199" text-anchor="middle" class="mono c-red">ConfigError</text>
+<line class="ln" x1="528" y1="194" x2="556" y2="194" marker-end="url(#arrow)"/>
+<rect class="box" x="560" y="160" width="64" height="68" rx="10"/>
+<text x="592" y="202" text-anchor="middle" class="mono tb" style="font-size:22px">2</text>
+<rect class="box" x="24" y="240" width="292" height="48" rx="10"/>
+<text x="170" y="260" text-anchor="middle" class="tb">API 키</text>
+<text x="170" y="280" text-anchor="middle" class="ts">ANTHROPIC_API_KEY / AI_API_KEY 없음</text>
+<line class="ln" x1="316" y1="264" x2="344" y2="264" marker-end="url(#arrow)"/>
+<rect class="red" x="348" y="240" width="180" height="48" rx="10"/>
+<text x="438" y="269" text-anchor="middle" class="mono c-red">ApiKeyMissingError</text>
+<line class="ln" x1="528" y1="264" x2="556" y2="264" marker-end="url(#arrow)"/>
+<rect class="box" x="560" y="240" width="64" height="48" rx="10"/>
+<text x="592" y="272" text-anchor="middle" class="mono tb" style="font-size:22px">3</text>
+<rect class="box" x="24" y="300" width="292" height="68" rx="10"/>
+<text x="170" y="322" text-anchor="middle" class="tb">API 호출</text>
+<text x="170" y="341" text-anchor="middle" class="ts">401 · 403 · 404 · 429 · 400 · 연결 실패 · 5xx</text>
+<text x="170" y="359" text-anchor="middle" class="ts">max_tokens 잘림 · refusal · SDK 미설치</text>
+<line class="ln" x1="316" y1="334" x2="344" y2="334" marker-end="url(#arrow)"/>
+<rect class="red" x="348" y="300" width="180" height="68" rx="10"/>
+<text x="438" y="331" text-anchor="middle" class="mono c-red">ApiCallError</text>
+<text x="438" y="351" text-anchor="middle" class="ts">(원인: …)</text>
+<line class="ln" x1="528" y1="334" x2="556" y2="334" marker-end="url(#arrow)"/>
+<rect class="box" x="560" y="300" width="64" height="68" rx="10"/>
+<text x="592" y="342" text-anchor="middle" class="mono tb" style="font-size:22px">4</text>
+<rect class="box" x="24" y="380" width="292" height="44" rx="10"/>
+<text x="170" y="407" text-anchor="middle" class="tb">Ctrl+C</text>
+<line class="ln" x1="316" y1="402" x2="344" y2="402" marker-end="url(#arrow)"/>
+<rect class="red" x="348" y="380" width="180" height="44" rx="10"/>
+<text x="438" y="407" text-anchor="middle" class="mono c-red">KeyboardInterrupt</text>
+<line class="ln" x1="528" y1="402" x2="556" y2="402" marker-end="url(#arrow)"/>
+<rect class="box" x="560" y="380" width="64" height="44" rx="10"/>
+<text x="592" y="410" text-anchor="middle" class="mono tb" style="font-size:22px">130</text>
+<rect class="orange" x="652" y="300" width="184" height="68" rx="10"/>
+<text x="744" y="322" text-anchor="middle" class="ts">429 · 5xx · 연결 오류는</text>
+<text x="744" y="341" text-anchor="middle" class="ts">SDK 가 먼저 2번 더 시도</text>
+<text x="744" y="360" text-anchor="middle" class="tb c-orange" style="font-size:13px">(실측: 요청 3건)</text>
+<rect class="box" x="24" y="444" width="812" height="52" rx="10"/>
+<text x="430" y="466" text-anchor="middle"><tspan class="mono">cli.main</tspan> 이 <tspan class="mono">AiGitGenError</tspan> 하나로 받아 → <tspan class="mono">[ERROR]</tspan> 한 줄 (stderr)</text>
+<text x="430" y="486" text-anchor="middle" class="ts">stdout 은 비움 · --debug 면 스택트레이스 · Ctrl+C 만 따로 받아 130</text>
+</svg>

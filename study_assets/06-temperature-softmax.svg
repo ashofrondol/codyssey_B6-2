@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="392" viewBox="0 0 820 392" role="img" aria-labelledby="title desc">
+<title id="title">temperature 가 확률을 뾰족하게·평평하게</title>
+<desc id="desc">가상 점수 추가 2.0, 구현 1.0, 개선 0.5 를 softmax(점수/T) 로 확률로 바꾼 결과를 세 패널로 비교한다. T=0.2(이 도구 기본값)는 99.3%/0.7%/0.1%, T=0.5 는 84.4%/11.4%/4.2%, T=1.0 은 62.9%/23.1%/14.0% 로, T 가 높을수록 확률이 고르게 퍼진다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="820" height="392"/>
+<text class="th" x="24" y="36">다음 단어 후보 3개 — 가상의 점수 추가 2.0 · 구현 1.0 · 개선 0.5</text>
+<rect class="yellow" x="24" y="52" width="240" height="268" rx="12"/>
+<text class="tb" x="144.0" y="76" text-anchor="middle">T = 0.2 · 이 도구 기본값</text>
+<rect class="blue" x="48" y="110.0" width="48" height="180.0"/>
+<text class="ts tb" x="72" y="103.0" text-anchor="middle">99.3%</text>
+<text x="72" y="310" text-anchor="middle">추가</text>
+<rect class="blue" x="120" y="288.0" width="48" height="2.0"/>
+<text class="ts tb" x="144" y="281.0" text-anchor="middle">0.7%</text>
+<text x="144" y="310" text-anchor="middle">구현</text>
+<rect class="blue" x="192" y="288.0" width="48" height="2.0"/>
+<text class="ts tb" x="216" y="281.0" text-anchor="middle">0.1%</text>
+<text x="216" y="310" text-anchor="middle">개선</text>
+<rect class="box" x="290" y="52" width="240" height="268" rx="12"/>
+<text class="tb" x="410.0" y="76" text-anchor="middle">T = 0.5</text>
+<rect class="blue" x="314" y="137.0" width="48" height="153.0"/>
+<text class="ts tb" x="338" y="130.0" text-anchor="middle">84.4%</text>
+<text x="338" y="310" text-anchor="middle">추가</text>
+<rect class="blue" x="386" y="269.3" width="48" height="20.7"/>
+<text class="ts tb" x="410" y="262.3" text-anchor="middle">11.4%</text>
+<text x="410" y="310" text-anchor="middle">구현</text>
+<rect class="blue" x="458" y="282.4" width="48" height="7.6"/>
+<text class="ts tb" x="482" y="275.4" text-anchor="middle">4.2%</text>
+<text x="482" y="310" text-anchor="middle">개선</text>
+<rect class="box" x="556" y="52" width="240" height="268" rx="12"/>
+<text class="tb" x="676.0" y="76" text-anchor="middle">T = 1.0</text>
+<rect class="blue" x="580" y="176.0" width="48" height="114.0"/>
+<text class="ts tb" x="604" y="169.0" text-anchor="middle">62.9%</text>
+<text x="604" y="310" text-anchor="middle">추가</text>
+<rect class="blue" x="652" y="248.1" width="48" height="41.9"/>
+<text class="ts tb" x="676" y="241.1" text-anchor="middle">23.1%</text>
+<text x="676" y="310" text-anchor="middle">구현</text>
+<rect class="blue" x="724" y="264.6" width="48" height="25.4"/>
+<text class="ts tb" x="748" y="257.6" text-anchor="middle">14.0%</text>
+<text x="748" y="310" text-anchor="middle">개선</text>
+<text class="ts" x="24" y="346">막대 = 뽑힐 확률 · T 가 낮을수록 1등에 몰림(일관성) · 높을수록 고르게 퍼짐(다양성) · 점수는 설명용 가상 값</text>
+<text class="ts c-orange" x="24" y="368">claude-opus-5 등 최신 모델은 temperature 를 받지 않음 → 도구가 빼고 보냄</text>
+</svg>

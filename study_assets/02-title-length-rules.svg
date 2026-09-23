@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="540" viewBox="0 0 860 540" role="img" aria-labelledby="title desc">
+<title id="title">50자는 권고, 72자는 상한, PR 은 80자</title>
+<desc id="desc">커밋 제목은 50자까지 조용히 통과하고, 51~72자는 [WARN] 경고만 하고 자르지 않으며, 73자 이상은 상한 위반으로 재생성 1회 후에도 넘으면 자른다. 예시로 41자·66자 제목과, 스코프가 80자라 97자가 된 제목이 69자로 줄어드는 경우를 표시했다. PR 제목은 80자 하나만 기준이며 120자 제목은 80자로 잘린다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="860" height="540"/>
+
+<text class="th" x="24" y="36">커밋 제목 길이 — 두 숫자, 두 가지 처리</text>
+<text x="24" y="66"><tspan class="tb">커밋 제목</tspan><tspan class="ts">  — </tspan><tspan class="mono">type(scope): subject</tspan><tspan class="ts"> 전체 길이</tspan></text>
+
+<!-- 커밋 구간 상자 (눈금: x = 40 + 7.2 × 글자 수) -->
+<rect class="green" x="40" y="80" width="358" height="88" rx="8"/>
+<text x="219" y="104" text-anchor="middle" class="tb c-green">0 ~ 50자</text>
+<text x="219" y="126" text-anchor="middle" class="ts">조용히 통과</text>
+<text x="219" y="145" text-anchor="middle" class="ts">경고도 수정도 없음</text>
+
+<rect class="orange" x="402" y="80" width="154" height="88" rx="8"/>
+<text x="479" y="104" text-anchor="middle" class="tb c-orange">51 ~ 72자</text>
+<text x="479" y="124" text-anchor="middle" class="ts">[WARN] 권장 초과</text>
+<text x="479" y="141" text-anchor="middle" class="ts">자르지 않음</text>
+<text x="479" y="160" text-anchor="middle" class="mono">advise_commit</text>
+
+<rect class="red" x="560" y="80" width="276" height="88" rx="8"/>
+<text x="698" y="104" text-anchor="middle" class="tb c-red">73자 ~</text>
+<text x="698" y="124" text-anchor="middle" class="ts">상한 위반 → 재생성 1회</text>
+<text x="698" y="141" text-anchor="middle" class="ts">→ 그래도 넘으면 자르기</text>
+<text x="698" y="160" text-anchor="middle" class="mono">validate_commit · _fit_title</text>
+
+<!-- 커밋 수직선 -->
+<text x="40" y="188" text-anchor="middle" class="ts">0</text>
+<text x="400" y="188" text-anchor="middle" class="tb">50</text>
+<text x="558" y="188" text-anchor="middle" class="tb">72</text>
+<text x="828" y="188" text-anchor="end" class="ts">더 길게 →</text>
+<line class="ln" x1="40" y1="200" x2="832" y2="200"/>
+<line class="ln" x1="40" y1="194" x2="40" y2="206"/>
+<line class="ln" x1="400" y1="193" x2="400" y2="207"/>
+<line class="ln" x1="558" y1="193" x2="558" y2="207"/>
+
+<!-- 예시 ▲41 -->
+<polygon class="c-green" points="335,203 330,213 340,213"/>
+<line class="ln ln-green" x1="335" y1="214" x2="335" y2="238"/>
+<text x="327" y="232" text-anchor="end" class="tb c-green">41자</text>
+<text x="40" y="256" class="mono">feat(payment): 결제 요청 타임아웃 시 지수 백오프 재시도 추가</text>
+
+<!-- 예시 ▲66 -->
+<polygon class="c-orange" points="515,203 510,213 520,213"/>
+<line class="ln ln-orange" x1="515" y1="214" x2="515" y2="276"/>
+<text x="507" y="232" text-anchor="end" class="tb c-orange">66자</text>
+<text x="515" y="294" text-anchor="middle"><tspan class="mono">feat(cli): 가×55</tspan><tspan class="ts">  (‘가’ 55글자)</tspan></text>
+
+<!-- 예시 ▲97 → 69 -->
+<polygon class="c-red" points="738,203 733,213 743,213"/>
+<text x="748" y="232" class="tb c-red">97자</text>
+<path class="ln ln-orange" d="M738,214 V228 H537 V208" marker-end="url(#arrow-orange)"/>
+<text x="640" y="254" text-anchor="middle" class="ts c-orange">스코프 80자 → 자른 뒤 69자</text>
+
+<!-- PR 제목 -->
+<text x="24" y="336"><tspan class="tb">PR 제목</tspan><tspan class="ts">  — 숫자는 80 하나뿐 (눈금 간격은 위와 다름)</tspan></text>
+
+<rect class="green" x="40" y="350" width="478" height="72" rx="8"/>
+<text x="279" y="378" text-anchor="middle" class="tb c-green">0 ~ 80자</text>
+<text x="279" y="400" text-anchor="middle" class="ts">통과</text>
+
+<rect class="red" x="522" y="350" width="314" height="72" rx="8"/>
+<text x="679" y="374" text-anchor="middle" class="tb c-red">81자 ~</text>
+<text x="679" y="393" text-anchor="middle" class="ts">상한 위반 → 재생성 1회 → 그래도 넘으면 자르기</text>
+<text x="679" y="412" text-anchor="middle" class="mono">validate_pr · _truncate</text>
+
+<text x="40" y="442" text-anchor="middle" class="ts">0</text>
+<text x="520" y="442" text-anchor="middle" class="tb">80</text>
+<text x="828" y="442" text-anchor="end" class="ts">더 길게 →</text>
+<line class="ln" x1="40" y1="454" x2="832" y2="454"/>
+<line class="ln" x1="40" y1="448" x2="40" y2="460"/>
+<line class="ln" x1="520" y1="447" x2="520" y2="461"/>
+
+<polygon class="c-red" points="760,457 755,467 765,467"/>
+<text x="770" y="486" class="tb c-red">120자</text>
+<path class="ln ln-orange" d="M760,468 V482 H520 V462" marker-end="url(#arrow-orange)"/>
+<text x="640" y="504" text-anchor="middle" class="ts c-orange">자른 뒤 80자</text>
+
+<text x="24" y="526" class="ts">자 = 파이썬 <tspan class="mono">len()</tspan> 글자 수 (한글 1자 = 1) · 기준값 50 · 72 · 80 은 <tspan class="mono">config.py</tspan> 기본값</text>
+</svg>

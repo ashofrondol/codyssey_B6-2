@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="552" viewBox="0 0 880 552" role="img" aria-labelledby="title desc">
+<title id="title">보내기 전에 가리고, 그다음 줄인다</title>
+<desc id="desc">안전 모드는 diff 를 보내기 전에 (A) 정규식 12개로 비밀 값을 가리고 (B) 최대 10파일·200줄로 잘라낸다. 데모에서는 API 키와 이메일 값만 가려지고 변수 이름은 남았고, 12파일 432줄짜리 큰 diff 는 6파일 202줄로 줄었다. 여러 줄짜리 개인키가 자르는 선에 걸릴 때 먼저 자르면 키 일부가 새지만, 먼저 가리면 블록 전체가 가려진다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="880" height="552"/>
+
+<text class="th" x="24" y="34">안전 모드 = (A) 마스킹 → (B) 전송량 제한</text>
+<text class="ts" x="24" y="56">빨강 = 원문 비밀·실패 / 초록 = 가린 결과·성공 / 보라 = 안전 모드 처리 단계 / 점선 = 자르는 선</text>
+
+<!-- 띠1 -->
+<text class="tb" x="24" y="92">마스킹 전 → 후 (데모 실측)</text>
+<text class="tb c-red" x="40" y="137" text-anchor="middle">전</text>
+<rect class="red" x="64" y="104" width="496" height="56" rx="8"/>
+<text class="mono" x="78" y="127">+PG_API_KEY = "sk-ant-api03-EXAMPLE-NOT-A-REAL-KEY-000000"</text>
+<text class="mono" x="78" y="149">+SUPPORT_EMAIL = "billing@example.com"</text>
+<line class="ln" x1="120" y1="160" x2="120" y2="180" marker-end="url(#arrow)"/>
+<text class="tb c-green" x="40" y="217" text-anchor="middle">후</text>
+<rect class="green" x="64" y="184" width="360" height="56" rx="8"/>
+<text class="mono" x="78" y="207">+PG_API_KEY = "«MASKED:ANTHROPIC_KEY»"</text>
+<text class="mono" x="78" y="229">+SUPPORT_EMAIL = "«MASKED:EMAIL»"</text>
+<text class="ts" x="444" y="208">변수 이름은 남기고 값만 가린다 · 규칙 12개</text>
+<text class="ts" x="444" y="228">로그: 마스킹 2건 (anthropic-key×1, email×1)</text>
+
+<!-- 띠2 -->
+<text class="tb" x="24" y="280">파이프라인 (큰 diff 실측)</text>
+<rect class="box" x="24" y="296" width="168" height="56" rx="10"/>
+<text x="108" y="319" text-anchor="middle" class="tb">원본 diff</text>
+<text x="108" y="340" text-anchor="middle" class="ts">12파일 · 432줄</text>
+<line class="ln" x1="192" y1="324" x2="220" y2="324" marker-end="url(#arrow)"/>
+<rect class="purple" x="224" y="296" width="192" height="56" rx="10"/>
+<text x="320" y="319" text-anchor="middle" class="tb c-purple">(A) 마스킹</text>
+<text x="320" y="340" text-anchor="middle" class="ts">정규식 12개</text>
+<line class="ln" x1="416" y1="324" x2="444" y2="324" marker-end="url(#arrow)"/>
+<rect class="purple" x="448" y="296" width="200" height="56" rx="10"/>
+<text x="548" y="319" text-anchor="middle" class="tb c-purple">(B) 잘라내기</text>
+<text x="548" y="340" text-anchor="middle" class="ts">최대 10파일 / 200줄</text>
+<line class="ln" x1="648" y1="324" x2="676" y2="324" marker-end="url(#arrow)"/>
+<rect class="green" x="680" y="296" width="176" height="56" rx="10"/>
+<text x="768" y="319" text-anchor="middle" class="tb c-green">전송</text>
+<text x="768" y="340" text-anchor="middle" class="ts">6/12파일 · 202줄</text>
+<text class="ts" x="856" y="374" text-anchor="end">200줄이 먼저 차서 6번째 파일에서 멈춤 · 202 = 200줄 + 안내 2줄</text>
+
+<!-- 띠3 -->
+<text class="tb" x="24" y="414">왜 순서가 중요한가 — 개인키가 자르는 선에 걸리면</text>
+<text class="mono" x="440" y="448" text-anchor="middle">-----BEGIN RSA PRIVATE KEY-----</text>
+<text class="mono" x="440" y="468" text-anchor="middle">MIIEow…</text>
+<text class="mono" x="440" y="488" text-anchor="middle">…</text>
+<line class="ln dash" x1="304" y1="502" x2="576" y2="502"/>
+<rect class="bg" x="498" y="489" width="70" height="26"/>
+<text class="ts" x="533" y="507" text-anchor="middle">자르는 선</text>
+<text class="mono" x="440" y="528" text-anchor="middle">-----END RSA PRIVATE KEY-----</text>
+
+<rect class="red" x="24" y="436" width="256" height="92" rx="10"/>
+<text x="152" y="462" text-anchor="middle" class="tb c-red">먼저 자르면</text>
+<text x="152" y="486" text-anchor="middle" class="ts">END 가 잘려 규칙 불일치</text>
+<text x="152" y="508" text-anchor="middle" class="ts">→ MIIEow… 그대로 노출</text>
+
+<rect class="green" x="600" y="436" width="256" height="92" rx="10"/>
+<text x="728" y="462" text-anchor="middle" class="tb c-green">먼저 가리면</text>
+<text x="728" y="486" text-anchor="middle" class="ts">블록 전체가 한 번에</text>
+<text x="728" y="508" text-anchor="middle" class="mono">«MASKED:PRIVATE_KEY»</text>
+</svg>

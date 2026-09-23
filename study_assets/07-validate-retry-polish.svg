@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="668" viewBox="0 0 860 668" role="img" aria-labelledby="title desc">
+<title id="title">규칙을 지키게 만드는 세 겹</title>
+<desc id="desc">API 로 초안을 만들고(1회째) 코드로 형식 규칙을 검증한다. 위반이 있고 재생성이 허용되면 위반 목록을 붙여 한 번 더 호출하고(2회째), 재생성 결과가 더 나쁘면 첫 초안을 쓴다. 어느 경로든 비용이 들지 않는 후처리로 남은 위반을 고치고, 커밋 제목이 51~72자면 경고만 한 뒤 구분선 블록으로 출력한다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="860" height="668"/>
+
+<text class="th" x="24" y="34">생성 → 검증 → (필요하면) 재생성 1회 → 후처리 → 권고 → 출력</text>
+<text class="ts" x="24" y="56">파랑 = API 호출(비용) · 초록 = 코드 처리(비용 0) · 주황 = 경고</text>
+
+<rect class="box" x="600" y="76" width="236" height="56" rx="10"/>
+<text x="718" y="99" text-anchor="middle" class="mono">MAX_API_CALLS = 2</text>
+<text x="718" y="121" text-anchor="middle" class="ts">한 번 실행에 API 호출 최대 2회</text>
+
+<!-- 레일: 모든 경로가 모여 ⑤로 -->
+<path class="ln" d="M290,240 H752"/>
+<path class="ln" d="M330,322 H752"/>
+<path class="ln" d="M552,458 H752"/>
+<path class="ln" d="M552,494 H752"/>
+<path class="ln" d="M752,240 V528 H175 V548" marker-end="url(#arrow)"/>
+<text class="ts" x="764" y="400">모두</text>
+<text class="ts" x="764" y="418">⑤로</text>
+
+<!-- ① 생성 -->
+<rect class="blue" x="56" y="76" width="288" height="48" rx="10"/>
+<text x="200" y="96" text-anchor="middle" class="tb c-blue">① 생성 · API 호출 1회째</text>
+<text x="200" y="116" text-anchor="middle" class="mono">generator.generate</text>
+<line class="ln" x1="200" y1="124" x2="200" y2="144" marker-end="url(#arrow)"/>
+
+<!-- ② 검증 -->
+<rect class="box" x="56" y="148" width="288" height="48" rx="10"/>
+<text x="200" y="168" text-anchor="middle" class="tb">② 검증</text>
+<text x="200" y="188" text-anchor="middle" class="mono">validate_commit / validate_pr</text>
+<line class="ln" x1="200" y1="196" x2="200" y2="216" marker-end="url(#arrow)"/>
+
+<!-- 결정 1 -->
+<rect class="box" x="110" y="220" width="180" height="40" rx="20"/>
+<text x="200" y="245" text-anchor="middle" class="tb">위반 0건?</text>
+<rect class="bg" x="316" y="227" width="28" height="26"/>
+<text x="330" y="245" text-anchor="middle" class="ts">예</text>
+
+<line class="ln" x1="200" y1="260" x2="200" y2="292" marker-end="url(#arrow)"/>
+<text x="210" y="281" class="ts">아니오</text>
+
+<!-- 결정 2 -->
+<rect class="box" x="70" y="296" width="260" height="52" rx="20"/>
+<text x="200" y="317" text-anchor="middle" class="tb">재생성 가능?</text>
+<text x="200" y="338" text-anchor="middle" class="mono">--no-retry 아님 · calls &lt; 2</text>
+<rect class="bg" x="348" y="309" width="52" height="26"/>
+<text x="374" y="327" text-anchor="middle" class="ts">아니오</text>
+
+<line class="ln" x1="200" y1="348" x2="200" y2="380" marker-end="url(#arrow)"/>
+<text x="210" y="369" class="ts">예</text>
+
+<!-- ③ 재생성 -->
+<rect class="blue" x="56" y="384" width="288" height="48" rx="10"/>
+<text x="200" y="404" text-anchor="middle" class="tb c-blue">③ 재생성 · API 호출 2회째</text>
+<text x="200" y="424" text-anchor="middle" class="ts">위반 목록을 붙여 1회 더</text>
+<line class="ln" x1="200" y1="432" x2="200" y2="452" marker-end="url(#arrow)"/>
+
+<!-- ④ 재검증 → 결정 3 -->
+<rect class="box" x="56" y="456" width="288" height="40" rx="10"/>
+<text x="200" y="481" text-anchor="middle" class="tb">④ 재검증</text>
+<line class="ln" x1="344" y1="476" x2="372" y2="476" marker-end="url(#arrow)"/>
+
+<rect class="box" x="376" y="444" width="176" height="64" rx="20"/>
+<text x="464" y="471" text-anchor="middle" class="tb">더 나빠졌나?</text>
+<text x="464" y="492" text-anchor="middle" class="ts">위반 수 비교</text>
+<text x="566" y="450" class="ts"><tspan class="tb">예</tspan> · 첫 초안 사용</text>
+<text x="566" y="486" class="ts"><tspan class="tb">아니오</tspan> · 재생성 초안 사용</text>
+
+<!-- ⑤ ⑥ ⑦ -->
+<rect class="green" x="40" y="552" width="270" height="92" rx="10"/>
+<text x="175" y="573" text-anchor="middle" class="tb c-green">⑤ 후처리</text>
+<text x="175" y="594" text-anchor="middle" class="mono">polish_commit / polish_pr</text>
+<text x="175" y="614" text-anchor="middle" class="ts">타입 교체 · 마침표 제거</text>
+<text x="175" y="633" text-anchor="middle" class="ts">제목 자르기 · 불릿 보충</text>
+<line class="ln" x1="310" y1="598" x2="330" y2="598" marker-end="url(#arrow)"/>
+
+<rect class="orange" x="334" y="552" width="240" height="92" rx="10"/>
+<text x="454" y="580" text-anchor="middle" class="tb c-orange">⑥ 권고</text>
+<text x="454" y="602" text-anchor="middle" class="mono">advise_commit</text>
+<text x="454" y="624" text-anchor="middle" class="ts">커밋 제목 51~72자면 [WARN]</text>
+<line class="ln" x1="574" y1="598" x2="594" y2="598" marker-end="url(#arrow)"/>
+
+<rect class="green" x="598" y="552" width="238" height="92" rx="10"/>
+<text x="717" y="592" text-anchor="middle" class="tb c-green">⑦ 출력</text>
+<text x="717" y="614" text-anchor="middle" class="ts">구분선 블록 · stdout</text>
+</svg>

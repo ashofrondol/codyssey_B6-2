@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="470" viewBox="0 0 860 470" role="img" aria-labelledby="title desc">
+<title id="title">명령 한 번이 지나가는 길 — 전체 구조</title>
+<desc id="desc">python main.py commit 을 실행하면 gitctx.py 가 git 에서 변경을 모으고, redact.py 가 비밀을 가리고, prompts.py 가 프롬프트를 조립한 뒤 client.py 가 Claude API 에 요청한다. 돌아온 JSON 은 polish.py 가 검증·후처리하고 render.py 가 초안은 stdout, 진행 로그는 stderr 로 나눠 출력한다. 변경이 없으면 ①에서 종료 코드 0 으로 바로 끝난다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="860" height="470"/>
+
+<text class="th" x="24" y="36"><tspan class="mono">python main.py commit</tspan> 한 번이 지나가는 길</text>
+<text class="ts" x="24" y="58">파란 화살표 = 요청 흐름 · 초록 = 결과 · 보라 = 설정·비밀 · 주황 점선 = 변경 없으면 여기서 종료</text>
+
+<!-- 윗줄: 사용자 · 조기 종료 · Claude API -->
+<rect class="box" x="24" y="76" width="208" height="52" rx="10"/>
+<text x="128" y="97" text-anchor="middle" class="tb">사용자 터미널</text>
+<text x="128" y="117" text-anchor="middle" class="mono">python main.py commit</text>
+
+<rect class="orange" x="256" y="76" width="156" height="52" rx="10"/>
+<text x="334" y="97" text-anchor="middle" class="tb c-orange">종료 코드 0</text>
+<text x="334" y="117" text-anchor="middle" class="ts">변경 사항이 없습니다</text>
+
+<rect class="box" x="464" y="76" width="200" height="52" rx="10"/>
+<text x="564" y="97" text-anchor="middle" class="tb">Claude API (외부)</text>
+<text x="564" y="117" text-anchor="middle" class="mono">POST /v1/messages</text>
+
+<!-- 우리 프로그램 영역 -->
+<rect class="zone" x="24" y="170" width="596" height="196" rx="12"/>
+<text class="ts" x="176" y="189">우리 프로그램 <tspan class="mono">aigitgen/</tspan> (<tspan class="mono">cli.py</tspan> 가 순서를 지휘)</text>
+
+<!-- 윗줄 모듈 ①~④ (요청 쪽) -->
+<rect class="blue" x="40" y="198" width="120" height="56" rx="10"/>
+<text x="100" y="221" text-anchor="middle"><tspan class="tb c-blue">① </tspan><tspan class="mono">gitctx.py</tspan></text>
+<text x="100" y="243" text-anchor="middle" class="ts">변경 수집</text>
+
+<rect class="blue" x="188" y="198" width="120" height="56" rx="10"/>
+<text x="248" y="221" text-anchor="middle"><tspan class="tb c-blue">② </tspan><tspan class="mono">redact.py</tspan></text>
+<text x="248" y="243" text-anchor="middle" class="ts">안전 모드</text>
+
+<rect class="blue" x="336" y="198" width="120" height="56" rx="10"/>
+<text x="396" y="221" text-anchor="middle"><tspan class="tb c-blue">③ </tspan><tspan class="mono">prompts.py</tspan></text>
+<text x="396" y="243" text-anchor="middle" class="ts">프롬프트 조립</text>
+
+<rect class="blue" x="484" y="198" width="120" height="56" rx="10"/>
+<text x="544" y="221" text-anchor="middle"><tspan class="tb c-blue">④ </tspan><tspan class="mono">client.py</tspan></text>
+<text x="544" y="243" text-anchor="middle" class="ts">API 호출</text>
+
+<!-- 아랫줄 모듈 ⑤ ⑥ (결과 쪽) + 설정 -->
+<rect class="green" x="484" y="290" width="120" height="56" rx="10"/>
+<text x="544" y="313" text-anchor="middle"><tspan class="tb c-green">⑤ </tspan><tspan class="mono">polish.py</tspan></text>
+<text x="544" y="335" text-anchor="middle" class="ts">검증·후처리</text>
+
+<rect class="green" x="336" y="290" width="120" height="56" rx="10"/>
+<text x="396" y="313" text-anchor="middle"><tspan class="tb c-green">⑥ </tspan><tspan class="mono">render.py</tspan></text>
+<text x="396" y="335" text-anchor="middle" class="ts">칸 나눠 출력</text>
+
+<rect class="purple" x="168" y="290" width="144" height="56" rx="10"/>
+<text x="240" y="313" text-anchor="middle" class="mono">config.py ←</text>
+<text x="240" y="333" text-anchor="middle" class="mono">.ai-gitgen.json</text>
+
+<!-- 환경변수 (API 키) -->
+<rect class="purple" x="644" y="190" width="192" height="72" rx="10"/>
+<text x="740" y="212" text-anchor="middle" class="tb c-purple">환경변수 (API 키)</text>
+<text x="740" y="233" text-anchor="middle" class="mono">ANTHROPIC_API_KEY</text>
+<text x="740" y="252" text-anchor="middle"><tspan class="ts">또는 </tspan><tspan class="mono">AI_API_KEY</tspan></text>
+
+<!-- 아래 줄: git · stdout · stderr -->
+<rect class="box" x="24" y="386" width="204" height="56" rx="10"/>
+<text x="126" y="408" text-anchor="middle" class="tb">git (외부 프로그램)</text>
+<text x="126" y="430" text-anchor="middle" class="mono">git status / git diff</text>
+
+<rect class="green" x="256" y="386" width="148" height="56" rx="10"/>
+<text x="330" y="408" text-anchor="middle" class="tb c-green">stdout</text>
+<text x="330" y="430" text-anchor="middle" class="ts">초안 (구분선 블록)</text>
+
+<rect class="box" x="428" y="386" width="256" height="56" rx="10"/>
+<text x="556" y="408" text-anchor="middle" class="tb">stderr (진행 로그)</text>
+<text x="556" y="430" text-anchor="middle" class="mono">[INFO] [WARN] [DONE] [ERROR]</text>
+
+<!-- 화살표: 요청 흐름 -->
+<line class="ln ln-blue" x1="96" y1="130" x2="96" y2="194" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="162" y1="226" x2="184" y2="226" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="310" y1="226" x2="332" y2="226" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-blue" x1="458" y1="226" x2="480" y2="226" marker-end="url(#arrow-blue)"/>
+
+<!-- ④ ↔ Claude API -->
+<line class="ln ln-blue" x1="520" y1="196" x2="520" y2="132" marker-end="url(#arrow-blue)"/>
+<line class="ln ln-green" x1="600" y1="130" x2="600" y2="194" marker-end="url(#arrow-green)"/>
+<text x="512" y="147" text-anchor="end" class="ts c-blue">요청 1회</text>
+<text x="512" y="163" text-anchor="end" class="ts c-blue">(위반 시 최대 2회)</text>
+<text x="608" y="155" class="ts c-green">JSON 응답</text>
+
+<!-- 환경변수 → ④ -->
+<line class="ln ln-purple" x1="642" y1="226" x2="608" y2="226" marker-end="url(#arrow-purple)"/>
+
+<!-- 결과 흐름 -->
+<line class="ln ln-green" x1="544" y1="256" x2="544" y2="286" marker-end="url(#arrow-green)"/>
+<text x="536" y="276" text-anchor="end" class="ts c-green">응답 JSON</text>
+<line class="ln ln-green" x1="482" y1="318" x2="460" y2="318" marker-end="url(#arrow-green)"/>
+<line class="ln ln-green" x1="364" y1="348" x2="364" y2="382" marker-end="url(#arrow-green)"/>
+<line class="ln" x1="440" y1="348" x2="440" y2="382" marker-end="url(#arrow)"/>
+
+<!-- ① ↔ git -->
+<line class="ln" x1="72" y1="258" x2="72" y2="382" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="82" y="322" class="ts">subprocess</text>
+
+<!-- 조기 종료 -->
+<path class="ln ln-orange dash" d="M148,196 V148 H334 V132" marker-end="url(#arrow-orange)"/>
+</svg>

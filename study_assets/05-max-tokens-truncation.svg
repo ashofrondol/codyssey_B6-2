@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="360" viewBox="0 0 860 360" role="img" aria-labelledby="title desc">
+<title id="title">max_tokens 는 목표가 아니라 상한</title>
+<desc id="desc">--max-tokens 2000 이면 모델이 상한 전에 스스로 끝내고 stop_reason 이 end_turn 이 되어 JSON 을 파싱해 초안을 만든다. 남은 칸은 과금되지 않는다. --max-tokens 100 이면 JSON 을 쓰다가 상한에서 잘려 stop_reason 이 max_tokens 가 되고, 도구는 [ERROR] 응답이 max_tokens 에서 잘렸습니다 를 알리고 종료 코드 4 로 멈춘다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="860" height="360"/>
+<text class="th" x="24" y="36">같은 요청, 다른 상한</text>
+<text class="ts" x="210" y="36">막대 길이 = 토큰 수 (두 줄이 같은 눈금)</text>
+<text class="mono tb" x="24" y="76">① --max-tokens 2000</text>
+<rect class="green" x="24" y="88" width="144" height="48" rx="0"/>
+<rect class="box" x="168" y="88" width="216" height="48" rx="0"/>
+<text class="ts c-green" x="96.0" y="108" text-anchor="middle">생성한 출력</text>
+<text class="ts c-green" x="96.0" y="126" text-anchor="middle">(여기서 끝남)</text>
+<text class="ts" x="276.0" y="117" text-anchor="middle">안 쓴 칸 — 과금 안 됨</text>
+<text class="ts" x="24" y="154">0</text>
+<text class="ts" x="384" y="154" text-anchor="end">2000 토큰</text>
+<line class="ln ln-green" x1="388" y1="112" x2="428" y2="112" marker-end="url(#arrow-green)"/>
+<rect class="green" x="432" y="86" width="150" height="52" rx="10"/>
+<text class="mono" x="507.0" y="107" text-anchor="middle">stop_reason:</text>
+<text class="mono tb" x="507.0" y="127" text-anchor="middle">"end_turn"</text>
+<line class="ln ln-green" x1="586" y1="112" x2="620" y2="112" marker-end="url(#arrow-green)"/>
+<text class="tb c-green" x="626" y="117">JSON 파싱 → 초안</text>
+<text class="mono tb" x="24" y="192">② --max-tokens 100</text>
+<text class="ts" x="208" y="192">생성하다 멈춘 JSON (예시)</text>
+<text class="mono c-red" x="24" y="214">{"type": "feat", "scope": "payment", "subject": "결제 요…</text>
+<rect class="red" x="24" y="224" width="18.0" height="48" rx="0"/>
+<line class="ln ln-red" x1="42.0" y1="222" x2="42.0" y2="282"/>
+<text class="ts c-red tb" x="50.0" y="253">여기서 잘림</text>
+<text class="ts" x="24" y="298">100 토큰</text>
+<line class="ln ln-red" x1="132" y1="248" x2="428" y2="248" marker-end="url(#arrow-red)"/>
+<rect class="red" x="432" y="222" width="150" height="52" rx="10"/>
+<text class="mono" x="507.0" y="243" text-anchor="middle">stop_reason:</text>
+<text class="mono tb" x="507.0" y="263" text-anchor="middle">"max_tokens"</text>
+<line class="ln ln-red" x1="586" y1="248" x2="620" y2="248" marker-end="url(#arrow-red)"/>
+<text class="mono c-red" x="626" y="238">[ERROR] 응답이 max_tokens</text>
+<text class="mono c-red" x="626" y="258">에서 잘렸습니다.</text>
+<text class="ts" x="626" y="280">종료 코드 4 · 반쪽 JSON 은 안 씀</text>
+<text class="ts" x="24" y="336">Sonnet 4.6 출력 $15 / 100만 토큰 → 출력비 상한 = 호출당 $0.03 (입력비 별도)</text>
+</svg>

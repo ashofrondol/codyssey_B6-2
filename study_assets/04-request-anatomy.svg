@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="470" viewBox="0 0 880 470" role="img" aria-labelledby="title desc">
+<title id="title">요청 봉투와 답장 봉투 — Messages API 해부</title>
+<desc id="desc">aigitgen 이 Claude API 에 보내는 POST /v1/messages 요청은 헤더(x-api-key, anthropic-version, content-type)와 본문(model, max_tokens, temperature, 매번 같은 system 규칙, 매번 다른 user 변경 사항, output_config 스키마)으로 이루어진다. 응답에서는 코드 순서대로 먼저 usage 로 토큰 수를 더하고, 그다음 내용보다 먼저 stop_reason 을 확인해 잘림·거절이면 멈추고, 마지막으로 content 의 text 를 JSON 으로 읽는다. 401·403·404·429·5xx 는 모두 ApiCallError(종료 코드 4)가 된다.</desc>
+<style>
+  text{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;font-size:15px;fill:#1D1F23}
+  .bg{fill:#FFFFFF}
+  .ts{font-size:13px;fill:#5B6069}
+  .th{font-size:17px;font-weight:700}
+  .tb{font-weight:700}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,"Noto Sans Mono CJK KR",monospace;font-size:13.5px}
+  .box{fill:#F4F3EF;stroke:#9A9CA3;stroke-width:1.5}
+  .zone{fill:#FAF9F6;stroke:#C9C6BE;stroke-width:1.2;stroke-dasharray:5 4}
+  .blue{fill:#E7EFF9;stroke:#1F5FAD;stroke-width:1.6}
+  .green{fill:#E6F4EC;stroke:#1B7F4B;stroke-width:1.6}
+  .orange{fill:#FCEFE0;stroke:#B25E09;stroke-width:1.6}
+  .red{fill:#FCEBEA;stroke:#B42318;stroke-width:1.6}
+  .purple{fill:#F1EAFB;stroke:#6E3FB0;stroke-width:1.6}
+  .yellow{fill:#FFF3C4;stroke:#A07800;stroke-width:1.6}
+  .c-blue{fill:#1F5FAD}.c-green{fill:#1B7F4B}.c-orange{fill:#B25E09}.c-red{fill:#B42318}.c-purple{fill:#6E3FB0}.c-muted{fill:#5B6069}
+  .ln{stroke:#6B7078;stroke-width:1.6;fill:none}
+  .ln-blue{stroke:#1F5FAD}.ln-green{stroke:#1B7F4B}.ln-red{stroke:#B42318}.ln-orange{stroke:#B25E09}.ln-purple{stroke:#6E3FB0}
+  .dash{stroke-dasharray:6 5}
+  .ah{fill:#6B7078}.ah-blue{fill:#1F5FAD}.ah-green{fill:#1B7F4B}.ah-red{fill:#B42318}.ah-orange{fill:#B25E09}.ah-purple{fill:#6E3FB0}
+  @media (prefers-color-scheme:dark){
+    text{fill:#E8E6E1}
+    .bg{fill:#1A1C20}
+    .ts{fill:#A9A69F}
+    .box{fill:#24262B;stroke:#6B6E76}
+    .zone{fill:#1F2125;stroke:#43464D}
+    .blue{fill:#1B2940;stroke:#7FB0F0}
+    .green{fill:#16281E;stroke:#5FC98E}
+    .orange{fill:#2E2215;stroke:#E8A05A}
+    .red{fill:#301A18;stroke:#F08A80}
+    .purple{fill:#251C33;stroke:#C3A0F0}
+    .yellow{fill:#2E2812;stroke:#E3C45C}
+    .c-blue{fill:#9CC4F5}.c-green{fill:#7ED3A3}.c-orange{fill:#EDB27A}.c-red{fill:#F4A39B}.c-purple{fill:#D2B8F4}.c-muted{fill:#A9A69F}
+    .ln{stroke:#8D9098}
+    .ln-blue{stroke:#7FB0F0}.ln-green{stroke:#5FC98E}.ln-red{stroke:#F08A80}.ln-orange{stroke:#E8A05A}.ln-purple{stroke:#C3A0F0}
+    .ah{fill:#8D9098}.ah-blue{fill:#7FB0F0}.ah-green{fill:#5FC98E}.ah-red{fill:#F08A80}.ah-orange{fill:#E8A05A}.ah-purple{fill:#C3A0F0}
+  }
+</style>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-blue" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-red" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-green" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-orange" d="M0,0 L10,5 L0,10 z"/></marker>
+  <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-purple" d="M0,0 L10,5 L0,10 z"/></marker>
+</defs>
+<rect class="bg" x="0" y="0" width="880" height="470"/>
+<text class="th" x="24" y="36">POST /v1/messages 한 번 (SDK 가 실제로 보낸 구성)</text>
+<text class="ts" x="24" y="58">파랑 = 보내는 요청 · 보라 = 열쇠(헤더) · 초록 = 돌아온 응답 · 빨강 = 실패</text>
+<rect class="blue" x="24" y="72" width="380" height="324" rx="12"/>
+<text class="tb c-blue" x="40" y="96">요청</text>
+<text class="ts" x="388" y="96" text-anchor="end">보내는 쪽: aigitgen</text>
+<rect class="purple" x="40" y="108" width="348" height="74" rx="8"/>
+<text class="ts c-purple" x="376" y="128" text-anchor="end">헤더</text>
+<text class="mono" x="54" y="128">x-api-key: ‹환경변수 값›</text>
+<text class="mono" x="54" y="148">anthropic-version: 2023-06-01</text>
+<text class="mono" x="54" y="168">content-type: application/json</text>
+<text class="ts c-blue" x="40" y="206">본문 (JSON)</text>
+<text class="mono" x="54" y="228">"model": "claude-sonnet-4-6"</text>
+<text class="mono" x="54" y="248">"max_tokens": 2000</text>
+<text class="mono" x="54" y="268">"temperature": 0.2</text>
+<text class="ts" x="218" y="268">← extra_body 로 병합</text>
+<text class="mono" x="54" y="290">"system": 규칙 (699자)</text>
+<rect class="box" x="300" y="272" width="88" height="26" rx="13"/>
+<text class="ts" x="344" y="290" text-anchor="middle">매번 같음</text>
+<text class="mono" x="54" y="320">"messages": [{"role": "user",</text>
+<text class="mono" x="70" y="340">"content": 변경 사항 (2,122자)}]</text>
+<rect class="box" x="300" y="302" width="88" height="26" rx="13"/>
+<text class="ts" x="344" y="320" text-anchor="middle">매번 다름</text>
+<text class="mono" x="54" y="364">"output_config":</text>
+<text class="mono" x="70" y="384">{"format": JSON 스키마}</text>
+<rect class="box" x="456" y="196" width="88" height="64" rx="10"/>
+<text class="tb" x="500.0" y="222" text-anchor="middle">Claude</text>
+<text class="tb" x="500.0" y="244" text-anchor="middle">API</text>
+<line class="ln ln-blue" x1="406" y1="216" x2="452" y2="216" marker-end="url(#arrow-blue)"/>
+<text class="ts c-blue" x="430.0" y="206" text-anchor="middle">HTTPS</text>
+<line class="ln ln-green" x1="544" y1="240" x2="584" y2="240" marker-end="url(#arrow-green)"/>
+<rect class="green" x="588" y="72" width="268" height="324" rx="12"/>
+<text class="tb c-green" x="604" y="96">응답 (HTTP 200)</text>
+<text class="mono" x="604" y="128">"usage": {"input_tokens": …,</text>
+<text class="mono" x="620" y="148">"output_tokens": …}</text>
+<text class="ts" x="604" y="170">① 토큰 수부터 합산 (잘려도 집계)</text>
+<text class="mono tb" x="604" y="206">"stop_reason": "end_turn"</text>
+<text class="ts c-red" x="604" y="228">② 내용보다 먼저 확인! max_tokens·</text>
+<text class="ts c-red" x="622" y="246">refusal 이면 오류로 멈춤</text>
+<text class="mono" x="604" y="282">"content": [{"type": "text",</text>
+<text class="mono" x="620" y="302">"text": "{\"type\": \"feat\",</text>
+<text class="mono" x="620" y="322">...}"}]</text>
+<text class="ts" x="604" y="346">③ text 를 JSON 으로 읽어 초안에</text>
+<line class="ln ln-red" x1="500.0" y1="260" x2="500.0" y2="406" marker-end="url(#arrow-red)"/>
+<rect class="bg" x="460.0" y="315" width="80" height="30" rx="0"/>
+<text class="ts c-red" x="500.0" y="335" text-anchor="middle">HTTP 오류</text>
+<rect class="red" x="24" y="410" width="832" height="36" rx="8"/>
+<text class="c-red" x="440" y="433" text-anchor="middle">401 인증 · 403 권한 · 404 모델 · 429 한도 · 5xx 서버 → ApiCallError (종료 코드 4)</text>
+</svg>
